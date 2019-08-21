@@ -24,11 +24,54 @@ from bs4 import BeautifulSoup
 from urllib.request import urlopen
 from pandas import DataFrame
 
-
 server = app.server
 
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+    <head>
+	<meta charset="utf-8">
+	
+	<title>Modular Chemistry</title>
+        {%favicon%}
+        {%css%}
+    </head>
+    <body>
+        {%app_entry%}
+    <footer>
+        {%config%}
+        {%scripts%}
+        
+    </footer>
+    </body>
+</html>'''
+
+defaults = '''<!DOCTYPE html>
+<html>
+    <head>
+    <head>
+	<meta charset="utf-8">
+    </head>
+    <body>
+		<h4>Modular Chemistry</h4>
+         <p>When I was fourteen I learnt modular arithmetic at school. The examples we got seemed to come in a pattern. The answers were always 2, 8, 7, or 2, 8, 5… This immediately got me thinking about the configuration of electrons in atomic shells. Perhaps, I thought, there was a connection between these two disciplines that would explain the mysterious pattern of the electron configuration once and for all. I later realised that there was no such link - at least not in the way I had envisaged. The relationship between the modular arithmetic examples and the electron configuration had been a mere coincidence (either that or whoever set the maths questions was trying to stimulate thought or possibly impart some kind of information).</p>
+		<p>At first I tried to reconfigure the Periodic Table so that the electron count was based on remainder. This meant that a chemical reaction was balanced when the all of the elements summed to zero. Creating a table based on this method would make matching different stable reactions more easy. The problem is that modular arithmetic is only able to take place in a set number. So you can have mod 7 or mod 8, but you can’t have a number system that jumps around through different modular bases without rendering either one or all of them useless. And that is exactly what we see in electron configuration. The first orbital shell, called the “S” orbital only has 2 spaces for electrons to sit. The next shell, depending on which model you choose, either has 6 or 8 spaces. The first one is too complicated because it starts off at 2, then goes to 6, then back to 2, then 6 again and so on. Whereas the second one is much more regular in its way, starting off; 2, 8, 18. Obviously the number 8 appears here quite regularly, and since atoms with even numbers of electrons are generally less reactive than atoms with odd numbers (i.e. making them more stable) it is possible to rearrange this sequence into the following more manageable pattern; 2, 8, 2, 8, 8… The difficulty here is to deal with the twos, especially that beginning number two.</p>
+		 <img src='/assets/mod-form.png'> 
+		<p>I tried a number of different methods, trying to shoe horn the first two elements into the beginning or the end of my modular table and always succeeded in either putting the entire table out of whack or generally coming up with something unsatisfactory. Then I struck upon what I thought was a brilliant idea. Electron shells were circular and concentric in arrangement and here was me trying to push them into modular grid patterns. So, I decided to use a spiral pattern instead, which worked much better.</p>		<p>I selected the number 8 as my modular number system, which makes sense because it is the most obviously reoccurring numeral in electron configurations. This meant that I had a number system that went from 7 down to zero, with the numbers representing how many spaces were left for electrons to fill in each orbital. So if the number is zero, then you know that there are eight electrons in that shell, it is full (or very nearly full) and is not so reactive or entirely inert. Whereas if you have a 1, you know that there is only one electron needed in order to fill the shell, which means that this element is fairly reactive, but not as reactive as some as the alkaline metals, which are 1. The numeral 1 means that they are very reactive. The spiral made perfect sense because you could rotate the start point of the spiral into any position you want. In this case there were two atoms outside the mod 8 table; Hydrogen and Helium, which meant that I had to rotate the spiral around the modular table by a factor of two.</p>
+		<p>This allows us, for the most part, to keep all of the alkaloids in their respective groupings with the other alkaloids, the halogens with the halogens and the noble gases, who don\'t like to interact with the other more common metals, off together in their own group. In the periodic table below, I have tried to stick to a certain colour scheme so that the different groupings can be identified and you can see that, for the most part there is a remarkable conformity among them. With this model you it is easy to see how different elements could match up to form compounds. For instance, Hydrogen, Fluorine, and Chlorine all need one more electron to fill their last electron shell, which means that they will all happily interact with each other. But they will also happily interact with any of the odd numbered elements, because two odds make an even. Even numbers will also happily interact with even numbers, as two evens also make up an even number, unless they are at 0, which means that they have become inert. So, 2 will interact with 4, 4 with itself and with 6 and so on. The image below explains this in a more intuitive fashion.</p>
+		 <img src='/assets/mod_table_elements.png'> 
+		<p>You may also notice in this new modular spiral rendition of the elemental table that some of the elements are repeated. This was a conscious decision I made not to leave any gaps, but it also helps get a better picture of just how interactive some of these elements are with each other, as the whole network becomes far more interconnected. Obviously, I could only use so many of the elements as I ran out of space. I suppose I could try to draw a bigger spiral, but I was afraid that it would take up too much space. So, instead I just decided to render all of the elements into a table, which works just as well.</p>		 <p>In any case, I was expecting that I would only be able to get a few more lines of elements done, before the whole modular system fell apart and I had to leave off. So I was pleasantly surprised when I was able to fit the entire table, all 118 elements (plus duplicates) into a single mod 8 table. The end result is, I think, quite pleasing and should be helpful to anyone looking to either memorise the table or become more familiar with how the different elements interact with each other. Meditation on the table may also bring to light new understandings of how the chemical elements complement each other and lead one down different and interesting areas of research and study.</p>
+    <footer>
+    </footer>
+    </body>
+</html>'''
+
 app.layout = html.Div([
-    html.H1(children='Modular Chemisty'),
+    html.Div([
+        html.H1('Modular Chemisty', style={'font-size':100, 'margin-top':30}, className='seven columns'),
+        html.Img( src="/assets/geogaff2.jpg", style={'width': '25%', 'float': 'right'}, className='five columns'),
+    ], className = "row"),
     html.Hr(),
     html.Br(),
     html.P('This app was made for people who are interested in learning Chemisty and to demonstrate the fundamentals of Modular Chemistry. To use this app, simply select from one of the four Compound Structures; \'Organic\', \'Ionic\', \'Oxide\' or \'Hydroxide\' and then click on the names of the elements in the table below. To help you form stable compounds, you can refer to the numbers above the table. For instance, we see that \'Lithium\' is directly underneath the number 7, this means that it needs 7 electrons to form a stable compound, you can therefore click on any compound whose numbers add up to 8; \'Mg\' (6) and \'O\' (2) sum to 8, as does \'Boron\' (5) and three \'Hydrogens\' (1). This is called the Rule of Eight. Of course you can have compounds which are not as stable as these which sum to seven, or ten, even twenty, so this is more of a guideline (or rule of thumb) rather than a strict rule. As you move further down into the centre of the periodic table, the Rule of Eight becomes less applicable, as the number of electron spaces increases from 8 to 18 to 32, this is why some of the elements in this area are repeated twice, to show that they can accept more electrons. If you play around with this you might be able to discover new compounds or existing ones. If the compound you find is in our databse, you will recieve a printout with the Chemical Name, Synonym and CAS Number. When this happens information from Wikipedia will (more often than not) appear on the screen. NOTE: This feature is still in Beta and can return unexpected results. You must hit the reset button to clear the field and start a new compound structure. Disclaimer; the app is super slow at times, have patience and trust the program; It should work.' ,
@@ -220,16 +263,16 @@ app.layout = html.Div([
 	], className="row"),
     html.Br(),
     html.Div([
-            html.Hr(className="ten columns offset-by-one"),
-                html.Button('Organic', id='organic', n_clicks=0, style={'width':'11.9%', 'color': 'white', 'background-color':'rgb(253, 169, 71)'},
+            html.Hr(style={'width':'80%'}, className='ten columns offset-by-one'),
+                html.Button('Organic', id='organic', n_clicks_timestamp='1', style={'width':'11.9%', 'color': 'white', 'background-color':'rgb(253, 169, 71)'},
 			className="two columns offset-by-one"),
-                html.Button('Ionic', id='ionic', n_clicks=0, style={'width':'11.9%', 'color': 'white', 'background-color':'rgb(253, 169, 71)'},
+                html.Button('Ionic', id='ionic', n_clicks_timestamp='0', style={'width':'11.9%', 'color': 'white', 'background-color':'rgb(253, 169, 71)'},
 			className="two columns"),
-                html.Button('Oxides', id='oxide', n_clicks=0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'},
+                html.Button('Oxides', id='oxide',n_clicks_timestamp='0', style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'},
 			className="two columns"),
-                html.Button('Hydroxides', id='hydro', n_clicks=0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'},
+                html.Button('Hydroxides', id='hydro', n_clicks_timestamp='0', style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'},
 			className="two columns"),
-                html.Button('Reset', id='reset', n_clicks=0, style={'width':'11.9%', 'color': 'black', 'background-color':'white'},
+                html.Button('Reset', id='reset', n_clicks_timestamp='0', style={'width':'11.9%', 'color': 'black', 'background-color':'white'},
             className="two columns"),
 	], className="row"),
     html.Br(),
@@ -256,8 +299,10 @@ app.layout = html.Div([
         html.Hr(),
         html.Br(),
         html.Footer(
-            html.Center('Cataphysical Research Society - 2018.' ),
+            html.Center(
+            dcc.Markdown('''[Cataphysical Research Society - 2019.](cataphysical-research-society.herokuapp.com)''')),
         ),
+        html.Br(),
     ], className = "row"),
 ])
 
@@ -1043,82 +1088,29 @@ def update():
 
 @app.callback(
     Output(component_id='inter-button', component_property='children'),
-    [Input(component_id='organic', component_property='n_clicks'),
-    Input(component_id='ionic', component_property='n_clicks'),
-    Input(component_id='oxide', component_property='n_clicks'),
-    Input(component_id='hydro', component_property='n_clicks')])
+    [Input(component_id='organic', component_property='n_clicks_timestamp'),
+    Input(component_id='ionic', component_property='n_clicks_timestamp'),
+    Input(component_id='oxide', component_property='n_clicks_timestamp'),
+    Input(component_id='hydro', component_property='n_clicks_timestamp')])
 def update(organic, ionic, oxide, hydro):
-    clicks2= np.array([int(organic), int(ionic), int(oxide), int(hydro)])
-    sum_clicks2=clicks2.sum()
-    sum_mod = sum_clicks2 % 2
-    clicks3 = clicks2.tolist()
-    button= nd.array(['button1', 'button2', 'button3', 'button4'])
-    if sum_clicks2 == 0:
-        with open('mod2.txt', 'w') as outfile:
-            json.dump(clicks3, outfile)
-        with open('mod1.txt', 'w') as outfile:
-            json.dump(clicks3, outfile)
+    if int(organic) > int(ionic) and int(organic) > int(oxide):
+        if int(organic) > int(hydro):
             compound='organic'
-        with open('button.txt', 'w') as outfile:
-            json.dump(compound, outfile)
-    elif sum_mod == 1:
-        with open('mod1.txt', 'w') as outfile:
-            json.dump(clicks3, outfile)
-        with open('mod2.txt') as json_file:  
-            mod2 = json.load(json_file)
-        mod2 = np.array(mod2)
-        diff2 = mod2 + clicks2
-        diff2 = diff2 % 2
-        max_clicks2= max((x) for x in diff2)
-        elimin8 = [diff2 != max_clicks2]
-        mask2 = ma.masked_array(button, elimin8)
-        mask2=mask2.tolist()
-        result= [i for i in mask2 if i is not None]
-        if result[0] == 'button1':
-            compound='organic'
-            with open('button.txt', 'w') as outfile:
-                json.dump(compound, outfile)
-        elif result[0] == 'button2':
+            return json.dumps(compound)
+    elif int(ionic) > int(organic) and int(ionic) > int(oxide):
+        if int(ionic) > int(hydro):
             compound='ionic'
-            with open('button.txt', 'w') as outfile:
-                json.dump(compound, outfile)
-        elif result[0] == 'button3':
+            return json.dumps(compound)
+    elif int(oxide) > int(organic) and int(oxide) > int(ionic):
+        if int(oxide) > int(hydro):
             compound='oxide'
-            with open('button.txt', 'w') as outfile:
-                json.dump(compound, outfile)
-        elif result[0] == 'button4':
-            compound='hydro'
-            with open('button.txt', 'w') as outfile:
-                json.dump(compound, outfile)
-    elif sum_mod == 0:
-        with open('mod2.txt', 'w') as outfile:
-            json.dump(clicks3, outfile)
-        with open('mod1.txt') as json_file:  
-            mod1 = json.load(json_file)
-        mod1 = np.array(mod1)
-        diff2 = mod1 + clicks2
-        diff2 = diff2 % 2
-        max_clicks2= max((x) for x in diff2)
-        elimin8 = [diff2 != max_clicks2]
-        mask2 = ma.masked_array(button, elimin8)
-        mask2=mask2.tolist()
-        result= [i for i in mask2 if i is not None]
-        if result[0] == 'button1':
-            compound='organic'
-            with open('button.txt', 'w') as outfile:
-                json.dump(compound, outfile)
-        elif result[0] == 'button2':
-            compound='ionic'
-            with open('button.txt', 'w') as outfile:
-                json.dump(compound, outfile)
-        elif result[0] == 'button3':
-            compound='oxide'
-            with open('button.txt', 'w') as outfile:
-                json.dump(compound, outfile)
-        elif result[0] == 'button4':
-            compound='hydro'
-            with open('button.txt', 'w') as outfile:
-                json.dump(compound, outfile)
+            return json.dumps(compound)
+    start = True
+    while start and int(hydro) > int(organic) and int(hydro) > int(ionic) and int(hydro) > int(oxide):
+        compound='hydro'
+        return json.dumps(compound)
+        start = False 
+
 
 @app.callback(dash.dependencies.Output('intermediate-value', 'children'),
  					  [dash.dependencies.Input('inter-button', 'children'),
@@ -1253,8 +1245,7 @@ def update(organic, ionic, oxide, hydro):
      					dash.dependencies.Input('Uus', 'n_clicks'),
      					dash.dependencies.Input('Uuo', 'n_clicks')])
 def func(inter_button, H, He, Li, Be, B, C, N, O, F, Ne, Na, Mg, Al, Si, P, S, Cl, Ar, K, Ca, Sc, Ti, V, Cr, K1, Ca1, Sc1, Ti1, V1, Cr1, Mn, Fe, Co, Ni, Cu, Zn, Ga, Ge, As, Se, Br, Kr, Rb, Sr, Y, Zr, Nb, Mo, Rb1, Sr1, Y1, Zr1, Nb1, Mo1, Tc, Ru, Rh, Pd, Ag, Cd, In, Sn, Sb, Te, I, Xe, Cs, Ba, La, Ce, Pr, Nd, Pm, Sm, Eu, Gd, Tb, Dy, Ho, Er, Tm, Yb, Lu, Hf, Ta, W, Re, Os, Ir, Pt, Au, Hg, Tl, Pb, Bi, Po, At, Rn, Fr, Ra, Ac, Th, Pa, U, Np, Pu, Am, Cm, Bk, Cf, Es, Fm, Md, No, Lr, Rf, Db, Sg, Bh, Hs, Mt, Ds, Rg, Cn, Uut, Fl, Uup, Lv, Uus, Uuo):
-    with open('button.txt') as json_file:
-        button = json.load(json_file)
+    button = json.loads(inter_button)
     elements = nd.array(['C', 'H', 'Ac', 'Ag', 'Al', 'Am', 'Ar', 'As', 'At', 'Au', 'B', 'Ba', 'Be', 'Bh', 'Bi', 'Bk', 'Br', 'Ca', 'Ca', 'Cd', 'Ce', 'Cf', 'Cl', 'Cm', 'Cn', 'Co', 'Cr', 'Cr', 'Cs', 'Cu', 'Db', 'Ds', 'Dy', 'Er', 'Es', 'Eu', 'F', 'Fe', 'Fl', 'Fm', 'Fr', 'Ga', 'Gd', 'Ge', 'He', 'Hf', 'Hg', 'Ho', 'Hs', 'I', 'In', 'Ir', 'K', 'K', 'Kr', 'La', 'Li', 'Lr', 'Lu', 'Lv', 'Md', 'Mg', 'Mn', 'Mo', 'Mo', 'Mt', 'N', 'Na', 'Nb', 'Nb', 'Nd', 'Ne', 'Ni', 'No', 'Np', 'O', 'Os', 'P', 'Pa', 'Pb', 'Pd', 'Pm', 'Po', 'Pr', 'Pt', 'Pu', 'Ra', 'Rb', 'Rb', 'Re', 'Rf', 'Rg', 'Rh', 'Rn', 'Ru', 'S', 'Sb', 'Sc', 'Sc', 'Se', 'Sg', 'Si', 'Sm', 'Sn', 'Sr', 'Sr', 'Ta', 'Tb', 'Tc', 'Te', 'Th', 'Ti', 'Ti', 'Tl', 'Tm', 'U', 'Uuo', 'Uup', 'Uus', 'Uut', 'V', 'V', 'W', 'Xe', 'Y', 'Y', 'Yb', 'Zn', 'Zr', 'Zr'])
     clicks = np.array([int(C), int(H), int(Ac), int(Ag), int(Al), int(Am), int(Ar), int(As), int(At), int(Au), int(B), int(Ba), int(Be), int(Bh), int(Bi), int(Bk), int(Br), int(Ca), int(Ca1), int(Cd), int(Ce), int(Cf), int(Cl), int(Cm), int(Cn), int(Co), int(Cr), int(Cr1), int(Cs), int(Cu), int(Db), int(Ds), int(Dy), int(Er), int(Es), int(Eu), int(F), int(Fe), int(Fl), int(Fm), int(Fr), int(Ga), int(Gd), int(Ge), int(He), int(Hf), int(Hg), int(Ho), int(Hs), int(I), int(In), int(Ir), int(K), int(K1), int(Kr), int(La), int(Li), int(Lr), int(Lu), int(Lv), int(Md), int(Mg), int(Mn), int(Mo), int(Mo1), int(Mt), int(N), int(Na), int(Nb), int(Nb1), int(Nd), int(Ne), int(Ni), int(No), int(Np), int(O), int(Os), int(P), int(Pa), int(Pb), int(Pd), int(Pm), int(Po), int(Pr), int(Pt), int(Pu), int(Ra), int(Rb), int(Rb1), int(Re), int(Rf), int(Rg), int(Rh), int(Rn), int(Ru), int(S), int(Sb), int(Sc), int(Sc1), int(Se), int(Sg), int(Si), int(Sm), int(Sn), int(Sr), int(Sr1), int(Ta), int(Tb), int(Tc), int(Te), int(Th), int(Ti), int(Ti1), int(Tl), int(Tm), int(U), int(Uuo), int(Uup), int(Uus), int(Uut), int(V), int(V1), int(W), int(Xe), int(Y), int(Y1), int(Yb), int(Zn), int(Zr), int(Zr1)])
     ions = nd.array(['Cs', 'Fr', 'K', 'K', 'Rb', 'Rb', 'Ba', 'Ra', 'Na', 'Sr', 'Sr', 'Li', 'Ca', 'Ca', 'Yb', 'La', 'Ac', 'Ce', 'Pr', 'Pm', 'Nd', 'Sm', 'Tb', 'Gd', 'Eu', 'Dy', 'Y', 'Y', 'Ho', 'Er', 'Tm', 'Lu', 'Pu', 'No', 'Es', 'Th', 'Hf', 'Md', 'Bk', 'Am', 'Lr', 'Cf', 'Cm', 'Fm', 'Mg', 'Zr', 'Zr', 'Np', 'Sc', 'Sc', 'U', 'Ta', 'Pa', 'Ti', 'Ti', 'Mn', 'Be', 'Nb', 'Nb', 'Al', 'V', 'V', 'Zn', 'Cr', 'Cr', 'Cd', 'In', 'Ga', 'Fe', 'Co', 'Si', 'Re', 'Tc', 'Cu', 'Ni', 'Ag', 'Sn', 'Po', 'Hg', 'Ge', 'Bi', 'Tl', 'B', 'Sb', 'Te', 'Mo', 'Mo', 'As', 'P', 'H', 'Ir', 'Ru', 'Os', 'At', 'Rn', 'Pd', 'Pt', 'Rh', 'Pb', 'W', 'Au', 'C', 'Se', 'S', 'Xe', 'I', 'Br', 'Kr', 'N', 'Cl', 'O', 'F', 'He', 'Ne', 'Ar', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds', 'Rg', 'Cn', 'Uut', 'Fl', 'Uup', 'Lv', 'Uus', 'Uuo'])
@@ -1291,8 +1282,6 @@ def func(inter_button, H, He, Li, Be, B, C, N, O, F, Ne, Na, Mg, Al, Si, P, S, C
     mask2 = ma.masked_array(elements, elimin9)
     mask2=mask2.tolist()
     abb= [i for i in mask2 if i is not None]
-    with open('abb.txt', 'w') as outfile:
-            json.dump(abb, outfile)
     elimin10 = [clicks == 0]
     mask4 = ma.masked_array(elimin10, clicks)
     mask5 = ma.masked_array(clicks, mask4)
@@ -1335,23 +1324,28 @@ def func(inter_button, H, He, Li, Be, B, C, N, O, F, Ne, Na, Mg, Al, Si, P, S, C
         ziplist = 'DBr'
     elif ziplist == 'KBr':
         ziplist = 'KBR'
+    ziplist1=[]
+    ziplist1.append(ziplist)
     sum_clicks = np.sum(clicks).tolist()
-    with open('sum-zero.txt', 'w') as outfile:
-            json.dump(sum_clicks, outfile)
+    sum_clicks2=str(sum_clicks)
+    total=[]
     if sum_clicks >= 1:
-        with open('output.txt', 'w') as outfile:
-            return json.dump(ziplist, outfile)
+        total.append(sum_clicks2)
+        total.append(abb)
+        total.append(ziplist1)
+        return json.dumps(total)
     elif sum_clicks==0:
-        reset = ''
-        with open('output.txt', 'w') as outfile:
-            return json.dump(reset, outfile)
+        reset = ['']
+        total.append(sum_clicks2)
+        total.append(abb)
+        total.append(ziplist1)
+        return json.dumps(total)
 
 @app.callback(
     Output(component_id='container', component_property='children'),
     [Input('inter-button', 'children')])
-def label(button):
-    with open('button.txt') as json_file:
-        button = json.load(json_file)
+def label(interbutton):
+    button = json.loads(interbutton)
     if button == 'organic':
         return html.Div([
                 html.Div('Organic Compound'),
@@ -1374,18 +1368,19 @@ def label(button):
     Output('textbox-1', 'value'),
     [Input('intermediate-value', 'children')])
 def update(intermediatevalue):
-    with open('output.txt') as json_file:
-        return json.load(json_file)
+    jg=json.loads(intermediatevalue)
+    fg=jg[-1]
+    return fg[0]
         
 
 @app.callback(
     Output('textbox-2', 'value'),
     [Input('intermediate-value', 'children')])
 def update(intermediatevalue):
-    with open('sum-zero.txt') as json_file:
-        zsum = json.load(json_file) 
-    with open('output.txt') as json_file:
-        chem = json.load(json_file)
+    jg=json.loads(intermediatevalue)
+    zsum = int(jg[0])
+    fg=jg[-1]
+    chem = fg[0]
     if zsum == 0:
         return 'No data'
     else:
@@ -1567,10 +1562,10 @@ def update(intermediatevalue):
     Output('interweb', 'children'),
     [Input('intermediate-value', 'children')])
 def update(intermediatevalue):
-    with open('sum-zero.txt') as json_file:
-        zsum = json.load(json_file) 
-    with open('output.txt') as json_file:
-        chem = json.load(json_file)
+    zsum1 = json.loads(intermediatevalue)
+    zsum = int(zsum1[0])
+    fg=zsum1[-1]
+    chem = fg[0]
     if zsum != 0:
         try:
             chemlen = len(chem)
@@ -1670,8 +1665,7 @@ def update(intermediatevalue):
                     startpos = edit[1]
             
                 elif chem[0] == 'C':
-                    with open('abb.txt') as json_file:
-                        abb = json.load(json_file)
+                    abb =zsum1[1]
                     if abb[0] == 'C':
                             c1 = soup.findChildren(attrs={'id': 'mwB1w'})[0] 
                             c1 = pd.read_html(str(c1))
@@ -1845,44 +1839,31 @@ def update(intermediatevalue):
                     body = soup.find('body')
                     body = body.findChildren()
                     body = str(body)
-                    with open('body.txt', 'w') as outfile:
-                        return json.dump(body, outfile)
+                    return json.dumps(body)
                 except IndexError:
-                    body = 'index 0 is out of bounds for axis 0 with size 0'
-                    with open('body.txt', 'w') as outfile:
-                        return json.dump(body, outfile)  
+                    return json.dumps(defaults)  
         except KeyError:
-            default = 'No data'
-            with open('body.txt', 'w') as outfile:
-                return json.dump(default, outfile)
+            return json.dumps(defaults)
 
 @app.callback(
     Output('container2', 'children'),
     [Input('interweb', 'children')])
 def update(interweb):
-    with open('sum-zero.txt') as json_file:
-        zsum = json.load(json_file)
-    if zsum == 0:
-        default = 'No data'
+    try:
+        body = json.loads(interweb)
+        body = body.replace('[', '')
+        body = body.replace(']', '')
         return  html.Iframe(
-                    # enable all sandbox features
-                    # see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
-                    # this prevents javascript from running inside the iframe
-                    # and other things security reasons
-                    sandbox='',
-                    style={'width': '80%', 'border-color': 'rgb(59, 57, 57)', 'background-color':'white', 'height':520,  'font-family': 'inherit',},
-                    srcDoc=(default),
-                className="ten columns offset-by-one")
-    else:
-        with open('body.txt') as json_file:
-            body = json.load(json_file)
-            body = body.replace('[', '')
-            body = body.replace(']', '')
-            return  html.Iframe(
-                sandbox='',
-                style={'width': '80%', 'border-color': 'rgb(59, 57, 57)', 'background-color':'white', 'height':520,  'font-family': 'inherit',},
-                srcDoc=(body),
-            className="ten columns offset-by-one")
+            sandbox='',
+            style={'width': '80%', 'border-color': 'rgb(59, 57, 57)', 'background-color':'white', 'height':520,  'font-family': 'inherit',},
+            srcDoc=(body),
+        className="ten columns offset-by-one")
+    except:
+        return  html.Iframe(
+            sandbox='',
+            style={'width': '80%', 'border-color': 'rgb(59, 57, 57)', 'background-color':'white', 'height':520,  'font-family': 'inherit',},
+            srcDoc=(defaults),
+        className="ten columns offset-by-one")
 
 
 if __name__ == '__main__':
