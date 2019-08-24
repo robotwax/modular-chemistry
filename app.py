@@ -8,6 +8,11 @@ import numpy as np
 import numpy as nd
 import numpy.ma as ma
 import re
+import pandas as pd
+import html5lib
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
+from pandas import DataFrame
 
 external_stylesheets = ['/assets/code.css']
 
@@ -17,12 +22,6 @@ app.config['suppress_callback_exceptions'] = True
 app.css.config.serve_locally = True
 app.scripts.config.serve_locally = True
 
-import pandas as pd
-import html5lib
-from tabulate import tabulate
-from bs4 import BeautifulSoup
-from urllib.request import urlopen
-from pandas import DataFrame
 
 server = app.server
 
@@ -31,9 +30,9 @@ app.index_string = '''
 <html>
     <head>
     <head>
-	<meta charset="utf-8">
-	
-	<title>Modular Chemistry</title>
+    <meta charset="utf-8">
+    
+    <title>Modular Chemistry</title>
         {%favicon%}
         {%css%}
     </head>
@@ -51,25 +50,31 @@ defaults = '''<!DOCTYPE html>
 <html>
     <head>
     <head>
-	<meta charset="utf-8">
+    <meta charset="utf-8">
     </head>
     <body>
-		<h4>Modular Chemistry</h4>
+        <h4>Modular Chemistry</h4>
          <p>When I was fourteen I learnt modular arithmetic at school. The examples we got seemed to come in a pattern. The answers were always 2, 8, 7, or 2, 8, 5… This immediately got me thinking about the configuration of electrons in atomic shells. Perhaps, I thought, there was a connection between these two disciplines that would explain the mysterious pattern of the electron configuration once and for all. I later realised that there was no such link - at least not in the way I had envisaged. The relationship between the modular arithmetic examples and the electron configuration had been a mere coincidence (either that or whoever set the maths questions was trying to stimulate thought or possibly impart some kind of information).</p>
-		<p>At first I tried to reconfigure the Periodic Table so that the electron count was based on remainder. This meant that a chemical reaction was balanced when the all of the elements summed to zero. Creating a table based on this method would make matching different stable reactions more easy. The problem is that modular arithmetic is only able to take place in a set number. So you can have mod 7 or mod 8, but you can’t have a number system that jumps around through different modular bases without rendering either one or all of them useless. And that is exactly what we see in electron configuration. The first orbital shell, called the “S” orbital only has 2 spaces for electrons to sit. The next shell, depending on which model you choose, either has 6 or 8 spaces. The first one is too complicated because it starts off at 2, then goes to 6, then back to 2, then 6 again and so on. Whereas the second one is much more regular in its way, starting off; 2, 8, 18. Obviously the number 8 appears here quite regularly, and since atoms with even numbers of electrons are generally less reactive than atoms with odd numbers (i.e. making them more stable) it is possible to rearrange this sequence into the following more manageable pattern; 2, 8, 2, 8, 8… The difficulty here is to deal with the twos, especially that beginning number two.</p>
-		 <img src='/assets/mod-form.png'> 
-		<p>I tried a number of different methods, trying to shoe horn the first two elements into the beginning or the end of my modular table and always succeeded in either putting the entire table out of whack or generally coming up with something unsatisfactory. Then I struck upon what I thought was a brilliant idea. Electron shells were circular and concentric in arrangement and here was me trying to push them into modular grid patterns. So, I decided to use a spiral pattern instead, which worked much better.</p>		<p>I selected the number 8 as my modular number system, which makes sense because it is the most obviously reoccurring numeral in electron configurations. This meant that I had a number system that went from 7 down to zero, with the numbers representing how many spaces were left for electrons to fill in each orbital. So if the number is zero, then you know that there are eight electrons in that shell, it is full (or very nearly full) and is not so reactive or entirely inert. Whereas if you have a 1, you know that there is only one electron needed in order to fill the shell, which means that this element is fairly reactive, but not as reactive as some as the alkaline metals, which are 1. The numeral 1 means that they are very reactive. The spiral made perfect sense because you could rotate the start point of the spiral into any position you want. In this case there were two atoms outside the mod 8 table; Hydrogen and Helium, which meant that I had to rotate the spiral around the modular table by a factor of two.</p>
-		<p>This allows us, for the most part, to keep all of the alkaloids in their respective groupings with the other alkaloids, the halogens with the halogens and the noble gases, who don\'t like to interact with the other more common metals, off together in their own group. In the periodic table below, I have tried to stick to a certain colour scheme so that the different groupings can be identified and you can see that, for the most part there is a remarkable conformity among them. With this model you it is easy to see how different elements could match up to form compounds. For instance, Hydrogen, Fluorine, and Chlorine all need one more electron to fill their last electron shell, which means that they will all happily interact with each other. But they will also happily interact with any of the odd numbered elements, because two odds make an even. Even numbers will also happily interact with even numbers, as two evens also make up an even number, unless they are at 0, which means that they have become inert. So, 2 will interact with 4, 4 with itself and with 6 and so on. The image below explains this in a more intuitive fashion.</p>
-		 <img src='/assets/mod_table_elements.png'> 
-		<p>You may also notice in this new modular spiral rendition of the elemental table that some of the elements are repeated. This was a conscious decision I made not to leave any gaps, but it also helps get a better picture of just how interactive some of these elements are with each other, as the whole network becomes far more interconnected. Obviously, I could only use so many of the elements as I ran out of space. I suppose I could try to draw a bigger spiral, but I was afraid that it would take up too much space. So, instead I just decided to render all of the elements into a table, which works just as well.</p>		 <p>In any case, I was expecting that I would only be able to get a few more lines of elements done, before the whole modular system fell apart and I had to leave off. So I was pleasantly surprised when I was able to fit the entire table, all 118 elements (plus duplicates) into a single mod 8 table. The end result is, I think, quite pleasing and should be helpful to anyone looking to either memorise the table or become more familiar with how the different elements interact with each other. Meditation on the table may also bring to light new understandings of how the chemical elements complement each other and lead one down different and interesting areas of research and study.</p>
+        <p>At first I tried to reconfigure the Periodic Table so that the electron count was based on remainder. This meant that a chemical reaction was balanced when the all of the elements summed to zero. Creating a table based on this method would make matching different stable reactions more easy. The problem is that modular arithmetic is only able to take place in a set number. So you can have mod 7 or mod 8, but you can’t have a number system that jumps around through different modular bases without rendering either one or all of them useless. And that is exactly what we see in electron configuration. The first orbital shell, called the “S” orbital only has 2 spaces for electrons to sit. The next shell, depending on which model you choose, either has 6 or 8 spaces. The first one is too complicated because it starts off at 2, then goes to 6, then back to 2, then 6 again and so on. Whereas the second one is much more regular in its way, starting off; 2, 8, 18. Obviously the number 8 appears here quite regularly, and since atoms with even numbers of electrons are generally less reactive than atoms with odd numbers (i.e. making them more stable) it is possible to rearrange this sequence into the following more manageable pattern; 2, 8, 2, 8, 8… The difficulty here is to deal with the twos, especially that beginning number two.</p>
+         <img src='/assets/mod-form.png'> 
+        <p>I tried a number of different methods, trying to shoe horn the first two elements into the beginning or the end of my modular table and always succeeded in either putting the entire table out of whack or generally coming up with something unsatisfactory. Then I struck upon what I thought was a brilliant idea. Electron shells were circular and concentric in arrangement and here was me trying to push them into modular grid patterns. So, I decided to use a spiral pattern instead, which worked much better.</p>		<p>I selected the number 8 as my modular number system, which makes sense because it is the most obviously reoccurring numeral in electron configurations. This meant that I had a number system that went from 7 down to zero, with the numbers representing how many spaces were left for electrons to fill in each orbital. So if the number is zero, then you know that there are eight electrons in that shell, it is full (or very nearly full) and is not so reactive or entirely inert. Whereas if you have a 1, you know that there is only one electron needed in order to fill the shell, which means that this element is fairly reactive, but not as reactive as some as the alkaline metals, which are 1. The numeral 1 means that they are very reactive. The spiral made perfect sense because you could rotate the start point of the spiral into any position you want. In this case there were two atoms outside the mod 8 table; Hydrogen and Helium, which meant that I had to rotate the spiral around the modular table by a factor of two.</p>
+        <p>This allows us, for the most part, to keep all of the alkaloids in their respective groupings with the other alkaloids, the halogens with the halogens and the noble gases, who don\'t like to interact with the other more common metals, off together in their own group. In the periodic table below, I have tried to stick to a certain colour scheme so that the different groupings can be identified and you can see that, for the most part there is a remarkable conformity among them. With this model you it is easy to see how different elements could match up to form compounds. For instance, Hydrogen, Fluorine, and Chlorine all need one more electron to fill their last electron shell, which means that they will all happily interact with each other. But they will also happily interact with any of the odd numbered elements, because two odds make an even. Even numbers will also happily interact with even numbers, as two evens also make up an even number, unless they are at 0, which means that they have become inert. So, 2 will interact with 4, 4 with itself and with 6 and so on. The image below explains this in a more intuitive fashion.</p>
+         <img src='/assets/mod_table_elements.png'> 
+        <p>You may also notice in this new modular spiral rendition of the elemental table that some of the elements are repeated. This was a conscious decision I made not to leave any gaps, but it also helps get a better picture of just how interactive some of these elements are with each other, as the whole network becomes far more interconnected. Obviously, I could only use so many of the elements as I ran out of space. I suppose I could try to draw a bigger spiral, but I was afraid that it would take up too much space. So, instead I just decided to render all of the elements into a table, which works just as well.</p>		 <p>In any case, I was expecting that I would only be able to get a few more lines of elements done, before the whole modular system fell apart and I had to leave off. So I was pleasantly surprised when I was able to fit the entire table, all 118 elements (plus duplicates) into a single mod 8 table. The end result is, I think, quite pleasing and should be helpful to anyone looking to either memorise the table or become more familiar with how the different elements interact with each other. Meditation on the table may also bring to light new understandings of how the chemical elements complement each other and lead one down different and interesting areas of research and study.</p>
     <footer>
     </footer>
     </body>
 </html>'''
 
+periodics={'A': 'mwKA', 'B': 'mwBBM', 'C': ('mwB1w', 'mwEtM'), 'D': 'mwGao', 'E': 'mwGfc', 'F': 'mwGoA', 'G': 'mwIJQ', 'H': 'mwISM', 'I': 'mwJBE', 'K': 'mwJOo', 'L': 'mwJdM', 'M': 'mwJxk', 'N': 'mwKS8', 'O': 'mwLNU', 'P': 'mwLRk', 'R': 'mwLeA', 'S': 'mwLoU', 'T': 'mwMNw', 'U': 'mwMgg', 'V': 'mwMnA', 'W': 'mwMrI', 'Y': 'mwM34', 'Z': 'mwNCM'}
+
+edit={'A': 52, 'B': 212, 'C': [337,  675], 'D': 946, 'E': 952, 'F': 980, 'G': 1231, 'H': 1252, 'I': 1360, 'K': 1394, 'L': 1430, 'M': 1480, 'N': 1558, 'O': 1694, 'P': 1703, 'R': 1734, 'S': 1761, 'T': 1852, 'U': 1900, 'V': 1914, 'W': 1923, 'X': 1955, 'Y': 1981}
+
 app.layout = html.Div([
     html.Div([
-        html.H1('Modular Chemisty', style={'font-size':100, 'margin-top':30}, className='seven columns'),
+        html.Div(children=[
+        html.H1(['Modular ', html.Span('Chemisty', style={'color':'#fda947'})], style={'font-size':100, 'margin-top':30}),
+        ], className='seven columns'),
         html.Img( src="/assets/geogaff2.jpg", style={'width': '25%', 'float': 'right'}, className='five columns'),
     ], className = "row"),
     html.Hr(),
@@ -89,7 +94,7 @@ app.layout = html.Div([
                 html.Button('2', id='2', n_clicks = 0, style={'width':'11.9%'}),
                 html.Button('1', id='1', n_clicks = 0, style={'width':'11.9%'}),
                 html.Button('0', id='0', n_clicks = 0, style={'width':'11.9%'}),
-			], className="ten columns offset-by-one"),
+            ], className="ten columns offset-by-one"),
             html.Div([
                 html.Button('_', style={'width':'11.9%', 'color':'white', 'background-color':'white'}),
                 html.Button('_', style={'width':'11.9%', 'color':'white', 'background-color':'white'}),
@@ -99,7 +104,7 @@ app.layout = html.Div([
                 html.Button('_', style={'width':'11.9%', 'color':'white', 'background-color':'white'}),
                 html.Button('Hydrogen', id='H', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(103, 179, 221)'}),
                 html.Button('Helium', id='He', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(107, 38, 131)'}),
-			], className="ten columns offset-by-one"),
+            ], className="ten columns offset-by-one"),
             html.Div([
                 html.Button('Lithium', id='Li', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(252, 48, 45)'}),
                 html.Button('Berylium', id='Be', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':' rgb(253, 169, 71)'}),
@@ -109,7 +114,7 @@ app.layout = html.Div([
                 html.Button('Oxygen', id='O', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(103, 179, 221)'}),
                 html.Button('Flourine', id='F', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(154, 72, 180)'}),
                 html.Button('Neon', id='Ne', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(107, 38, 131)'}),
-			], className="ten columns offset-by-one"),
+            ], className="ten columns offset-by-one"),
             html.Div([
                 html.Button('Sodium', id='Na', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(252, 48, 45)'}),
                 html.Button('Magnesium', id='Mg', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'}),
@@ -119,7 +124,7 @@ app.layout = html.Div([
                 html.Button('Sulphur', id='S', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(103, 179, 221'}),
                 html.Button('Chlorine', id='Cl', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(154, 72, 180)'}),
                 html.Button('Argon', id='Ar', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(107, 38, 131)'}),
-			], className="ten columns offset-by-one"),
+            ], className="ten columns offset-by-one"),
             html.Div([
                 html.Button('Potassium', id='K', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(252, 48, 45)'}),
                 html.Button('Calcium', id='Ca', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'}),
@@ -129,8 +134,8 @@ app.layout = html.Div([
                 html.Button('Chromium', id='Cr', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Potassium', id='K1', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(252, 48, 45)'}),
                 html.Button('Calcium', id='Ca1', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'}),
-			], className="ten columns offset-by-one"),
-			html.Div([
+            ], className="ten columns offset-by-one"),
+            html.Div([
                 html.Button('Scandium', id='Sc1', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Titanium', id='Ti1', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Vanadium', id='V1', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
@@ -139,7 +144,7 @@ app.layout = html.Div([
                 html.Button('Iron', id='Fe', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Cobalt', id='Co', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Nickel', id='Ni', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
-			], className="ten columns offset-by-one"),	
+            ], className="ten columns offset-by-one"),	
             html.Div([
                 html.Button('Copper', id='Cu', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Zinc', id='Zn', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
@@ -149,7 +154,7 @@ app.layout = html.Div([
                 html.Button('Selenium', id='Se', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(103, 179, 221)'}),
                 html.Button('Bromium', id='Br', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(154, 72, 180)'}),
                 html.Button('Krypton', id='Kr', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(107, 38, 131)'}),
-			], className="ten columns offset-by-one"),
+            ], className="ten columns offset-by-one"),
             html.Div([
                 html.Button('Rubinium', id='Rb', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(252, 48, 45)'}),
                 html.Button('Strontium', id='Sr', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'}),
@@ -159,7 +164,7 @@ app.layout = html.Div([
                 html.Button('Molybdenum', id='Mo', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Rubinium', id='Rb1', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(252, 48, 45)'}),
                 html.Button('Strontium', id='Sr1', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'}),
-			], className="ten columns offset-by-one"),
+            ], className="ten columns offset-by-one"),
             html.Div([
                 html.Button('Yttrium', id='Y1', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Zirconium', id='Zr1', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
@@ -169,7 +174,7 @@ app.layout = html.Div([
                 html.Button('Ruthenium', id='Ru', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Rhodium', id='Rh', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Palladium', id='Pd', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
-			], className="ten columns offset-by-one"),
+            ], className="ten columns offset-by-one"),
             html.Div([
                 html.Button('Silver', id='Ag', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Cadmium', id='Cd', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
@@ -179,8 +184,8 @@ app.layout = html.Div([
                 html.Button('Tellurium', id='Te', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(77, 156, 199)'}),
                 html.Button('Iodine', id='I', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(154, 72, 180)'}),
                 html.Button('Xenon', id='Xe', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(107, 38, 131)'}),
-			], className="ten columns offset-by-one"),
-			            html.Div([
+            ], className="ten columns offset-by-one"),
+                        html.Div([
                 html.Button('Cesium', id='Cs', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(252, 48, 45)'}),
                 html.Button('Barium', id='Ba', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'}),
                 html.Button('Lanthanum', id='La', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
@@ -189,7 +194,7 @@ app.layout = html.Div([
                 html.Button('Neodymium', id='Nd', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Promethium', id='Pm', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Samarium', id='Sm', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
-			], className="ten columns offset-by-one"),
+            ], className="ten columns offset-by-one"),
             html.Div([
                 html.Button('Europium', id='Eu', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Gadolinium', id='Gd', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
@@ -199,8 +204,8 @@ app.layout = html.Div([
                 html.Button('Erbium', id='Er', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Thulium', id='Tm', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Ytterbium', id='Yb', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
-			], className="ten columns offset-by-one"),
-			html.Div([
+            ], className="ten columns offset-by-one"),
+            html.Div([
                 html.Button('Lutetium', id='Lu', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Hafnium', id='Hf', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Tantalum', id='Ta', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
@@ -209,8 +214,8 @@ app.layout = html.Div([
                 html.Button('Osmium', id='Os', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Iridium', id='Ir', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Platinum', id='Pt', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
-			], className="ten columns offset-by-one"),
-			html.Div([
+            ], className="ten columns offset-by-one"),
+            html.Div([
                 html.Button('Gold', id='Au', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Mercury', id='Hg', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Thallium', id='Tl', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(158, 224, 98)'}),
@@ -219,8 +224,8 @@ app.layout = html.Div([
                 html.Button('Polonium', id='Po', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(103, 179, 221)'}),
                 html.Button('Astatine', id='At', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(154, 72, 180)'}),
                 html.Button('Radon', id='Rn', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(107, 38, 131)'}),
-			], className="ten columns offset-by-one"),
-			html.Div([
+            ], className="ten columns offset-by-one"),
+            html.Div([
                 html.Button('Francium', id='Fr', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(252, 48, 45)'}),
                 html.Button('Radium', id='Ra', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'}),
                 html.Button('Actinium', id='Ac', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
@@ -229,8 +234,8 @@ app.layout = html.Div([
                 html.Button('Uranium', id='U', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Neptunium', id='Np', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Plutonium', id='Pu', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
-			], className="ten columns offset-by-one"),
-			html.Div([
+            ], className="ten columns offset-by-one"),
+            html.Div([
                 html.Button('Americium', id='Am', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Curium', id='Cm', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Berkelium', id='Bk', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
@@ -239,8 +244,8 @@ app.layout = html.Div([
                 html.Button('Fermium', id='Fm', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Mendelevium', id='Md', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Nobelium', id='No', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
-			], className="ten columns offset-by-one"),
-			html.Div([
+            ], className="ten columns offset-by-one"),
+            html.Div([
                 html.Button('Lawrencium', id='Lr', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
                 html.Button('Rutherfordiu', id='Rf', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Dubnium', id='Db', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
@@ -249,8 +254,8 @@ app.layout = html.Div([
                 html.Button('Hassium', id='Hs', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Meitnerium', id='Mt', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Darmstadtium', id='Ds', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(113, 191, 66)'}),
-			], className="ten columns offset-by-one"),
-			html.Div([
+            ], className="ten columns offset-by-one"),
+            html.Div([
                 html.Button('Roentgenium', id='Rg', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Copernicium', id='Cn', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(254, 223, 107)'}),
                 html.Button('Nihonium', id='Uut', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(158, 224, 98)'}),
@@ -259,22 +264,22 @@ app.layout = html.Div([
                 html.Button('Livermorium', id='Lv', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(158, 224, 98)'}),
                 html.Button('Tennessine', id='Uus', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(154, 72, 180)'}),
                 html.Button('Oganesson', id='Uuo', n_clicks = 0, style={'width':'11.9%', 'color':'white', 'background-color':'rgb(107, 38, 131)'}),
-			], className="ten columns offset-by-one"),		
-	], className="row"),
+            ], className="ten columns offset-by-one"),		
+    ], className="row"),
     html.Br(),
     html.Div([
             html.Hr(style={'width':'80%'}, className='ten columns offset-by-one'),
                 html.Button('Organic', id='organic', n_clicks_timestamp='1', style={'width':'11.9%', 'color': 'white', 'background-color':'rgb(253, 169, 71)'},
-			className="two columns offset-by-one"),
+            className="two columns offset-by-one"),
                 html.Button('Ionic', id='ionic', n_clicks_timestamp='0', style={'width':'11.9%', 'color': 'white', 'background-color':'rgb(253, 169, 71)'},
-			className="two columns"),
+            className="two columns"),
                 html.Button('Oxides', id='oxide',n_clicks_timestamp='0', style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'},
-			className="two columns"),
+            className="two columns"),
                 html.Button('Hydroxides', id='hydro', n_clicks_timestamp='0', style={'width':'11.9%', 'color':'white', 'background-color':'rgb(253, 169, 71)'},
-			className="two columns"),
+            className="two columns"),
                 html.Button('Reset', id='reset', n_clicks_timestamp='0', style={'width':'11.9%', 'color': 'black', 'background-color':'white'},
             className="two columns"),
-	], className="row"),
+    ], className="row"),
     html.Br(),
     html.Div(id='inter-button', style={'display': 'none'}),
     html.Div([
@@ -284,9 +289,14 @@ app.layout = html.Div([
     html.Div(id='intermediate-value', style={'display': 'none'}),
     html.Div([
         dcc.Textarea(id='textbox-1', readOnly = 'False', style={'width': '30%', 'border-radius': 1, 'resize':'none'},
-        className='four columns offset-by-one'),
+        className='seven columns offset-by-one'),
+        html.Button('Search', id='search', n_clicks='0', style={'width':'11.9%', 'color': 'white', 'margin-top':12, 'background-color':'lightblue'},
+        className="two columns"),
+    ], className="row"),
+    html.Br(),
+    html.Div([
         dcc.Textarea(id='textbox-2', readOnly = 'False', style={'width': '40%', 'border-radius': 1, 'resize':'none'},
-        className='four columns offset-by-onehalf'),
+        className='three columns offset-by-one'),
     ], className="row"),
     html.Br(),
     html.Div(id='interweb', style={'display': 'none'}),
@@ -300,7 +310,7 @@ app.layout = html.Div([
         html.Br(),
         html.Footer(
             html.Center(
-            dcc.Markdown('''[Cataphysical Research Society - 2019.](cataphysical-research-society.herokuapp.com)''')),
+            dcc.Markdown('''[Cataphysical Research Society - 2019](https://cataphysical-research-society.herokuapp.com)''')),
         ),
         html.Br(),
     ], className = "row"),
@@ -1246,100 +1256,69 @@ def update(organic, ionic, oxide, hydro):
      					dash.dependencies.Input('Uuo', 'n_clicks')])
 def func(inter_button, H, He, Li, Be, B, C, N, O, F, Ne, Na, Mg, Al, Si, P, S, Cl, Ar, K, Ca, Sc, Ti, V, Cr, K1, Ca1, Sc1, Ti1, V1, Cr1, Mn, Fe, Co, Ni, Cu, Zn, Ga, Ge, As, Se, Br, Kr, Rb, Sr, Y, Zr, Nb, Mo, Rb1, Sr1, Y1, Zr1, Nb1, Mo1, Tc, Ru, Rh, Pd, Ag, Cd, In, Sn, Sb, Te, I, Xe, Cs, Ba, La, Ce, Pr, Nd, Pm, Sm, Eu, Gd, Tb, Dy, Ho, Er, Tm, Yb, Lu, Hf, Ta, W, Re, Os, Ir, Pt, Au, Hg, Tl, Pb, Bi, Po, At, Rn, Fr, Ra, Ac, Th, Pa, U, Np, Pu, Am, Cm, Bk, Cf, Es, Fm, Md, No, Lr, Rf, Db, Sg, Bh, Hs, Mt, Ds, Rg, Cn, Uut, Fl, Uup, Lv, Uus, Uuo):
     button = json.loads(inter_button)
-    elements = nd.array(['C', 'H', 'Ac', 'Ag', 'Al', 'Am', 'Ar', 'As', 'At', 'Au', 'B', 'Ba', 'Be', 'Bh', 'Bi', 'Bk', 'Br', 'Ca', 'Ca', 'Cd', 'Ce', 'Cf', 'Cl', 'Cm', 'Cn', 'Co', 'Cr', 'Cr', 'Cs', 'Cu', 'Db', 'Ds', 'Dy', 'Er', 'Es', 'Eu', 'F', 'Fe', 'Fl', 'Fm', 'Fr', 'Ga', 'Gd', 'Ge', 'He', 'Hf', 'Hg', 'Ho', 'Hs', 'I', 'In', 'Ir', 'K', 'K', 'Kr', 'La', 'Li', 'Lr', 'Lu', 'Lv', 'Md', 'Mg', 'Mn', 'Mo', 'Mo', 'Mt', 'N', 'Na', 'Nb', 'Nb', 'Nd', 'Ne', 'Ni', 'No', 'Np', 'O', 'Os', 'P', 'Pa', 'Pb', 'Pd', 'Pm', 'Po', 'Pr', 'Pt', 'Pu', 'Ra', 'Rb', 'Rb', 'Re', 'Rf', 'Rg', 'Rh', 'Rn', 'Ru', 'S', 'Sb', 'Sc', 'Sc', 'Se', 'Sg', 'Si', 'Sm', 'Sn', 'Sr', 'Sr', 'Ta', 'Tb', 'Tc', 'Te', 'Th', 'Ti', 'Ti', 'Tl', 'Tm', 'U', 'Uuo', 'Uup', 'Uus', 'Uut', 'V', 'V', 'W', 'Xe', 'Y', 'Y', 'Yb', 'Zn', 'Zr', 'Zr'])
-    clicks = np.array([int(C), int(H), int(Ac), int(Ag), int(Al), int(Am), int(Ar), int(As), int(At), int(Au), int(B), int(Ba), int(Be), int(Bh), int(Bi), int(Bk), int(Br), int(Ca), int(Ca1), int(Cd), int(Ce), int(Cf), int(Cl), int(Cm), int(Cn), int(Co), int(Cr), int(Cr1), int(Cs), int(Cu), int(Db), int(Ds), int(Dy), int(Er), int(Es), int(Eu), int(F), int(Fe), int(Fl), int(Fm), int(Fr), int(Ga), int(Gd), int(Ge), int(He), int(Hf), int(Hg), int(Ho), int(Hs), int(I), int(In), int(Ir), int(K), int(K1), int(Kr), int(La), int(Li), int(Lr), int(Lu), int(Lv), int(Md), int(Mg), int(Mn), int(Mo), int(Mo1), int(Mt), int(N), int(Na), int(Nb), int(Nb1), int(Nd), int(Ne), int(Ni), int(No), int(Np), int(O), int(Os), int(P), int(Pa), int(Pb), int(Pd), int(Pm), int(Po), int(Pr), int(Pt), int(Pu), int(Ra), int(Rb), int(Rb1), int(Re), int(Rf), int(Rg), int(Rh), int(Rn), int(Ru), int(S), int(Sb), int(Sc), int(Sc1), int(Se), int(Sg), int(Si), int(Sm), int(Sn), int(Sr), int(Sr1), int(Ta), int(Tb), int(Tc), int(Te), int(Th), int(Ti), int(Ti1), int(Tl), int(Tm), int(U), int(Uuo), int(Uup), int(Uus), int(Uut), int(V), int(V1), int(W), int(Xe), int(Y), int(Y1), int(Yb), int(Zn), int(Zr), int(Zr1)])
-    ions = nd.array(['Cs', 'Fr', 'K', 'K', 'Rb', 'Rb', 'Ba', 'Ra', 'Na', 'Sr', 'Sr', 'Li', 'Ca', 'Ca', 'Yb', 'La', 'Ac', 'Ce', 'Pr', 'Pm', 'Nd', 'Sm', 'Tb', 'Gd', 'Eu', 'Dy', 'Y', 'Y', 'Ho', 'Er', 'Tm', 'Lu', 'Pu', 'No', 'Es', 'Th', 'Hf', 'Md', 'Bk', 'Am', 'Lr', 'Cf', 'Cm', 'Fm', 'Mg', 'Zr', 'Zr', 'Np', 'Sc', 'Sc', 'U', 'Ta', 'Pa', 'Ti', 'Ti', 'Mn', 'Be', 'Nb', 'Nb', 'Al', 'V', 'V', 'Zn', 'Cr', 'Cr', 'Cd', 'In', 'Ga', 'Fe', 'Co', 'Si', 'Re', 'Tc', 'Cu', 'Ni', 'Ag', 'Sn', 'Po', 'Hg', 'Ge', 'Bi', 'Tl', 'B', 'Sb', 'Te', 'Mo', 'Mo', 'As', 'P', 'H', 'Ir', 'Ru', 'Os', 'At', 'Rn', 'Pd', 'Pt', 'Rh', 'Pb', 'W', 'Au', 'C', 'Se', 'S', 'Xe', 'I', 'Br', 'Kr', 'N', 'Cl', 'O', 'F', 'He', 'Ne', 'Ar', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds', 'Rg', 'Cn', 'Uut', 'Fl', 'Uup', 'Lv', 'Uus', 'Uuo'])
-    ionclicks = np.array([int(Cs), int(Fr), int(K), int(K1), int(Rb), int(Rb1), int(Ba), int(Ra), int(Na), int(Sr), int(Sr1), int(Li), int(Ca), int(Ca1), int(Yb), int(La), int(Ac), int(Ce), int(Pr), int(Pm), int(Nd), int(Sm), int(Tb), int(Gd), int(Eu), int(Dy), int(Y), int(Y1), int(Ho), int(Er), int(Tm), int(Lu), int(Pu), int(No), int(Es), int(Th), int(Hf), int(Md), int(Bk), int(Am), int(Lr), int(Cf), int(Cm), int(Fm), int(Mg), int(Zr), int(Zr1), int(Np), int(Sc), int(Sc1), int(U), int(Ta), int(Pa), int(Ti), int(Ti1), int(Mn), int(Be), int(Nb), int(Nb1), int(Al), int(V), int(V1), int(Zn), int(Cr), int(Cr1), int(Cd), int(In), int(Ga), int(Fe), int(Co), int(Si), int(Re), int(Tc), int(Cu), int(Ni), int(Ag), int(Sn), int(Po), int(Hg), int(Ge), int(Bi), int(Tl), int(B), int(Sb), int(Te), int(Mo), int(Mo1), int(As), int(P), int(H), int(Ir), int(Ru), int(Os), int(At), int(Rn), int(Pd), int(Pt), int(Rh), int(Pb), int(W), int(Au), int(C), int(Se), int(S), int(Xe), int(I), int(Br), int(Kr), int(N), int(Cl), int(O), int(F), int(He), int(Ne), int(Ar), int(Rf), int(Db), int(Sg), int(Bh), int(Hs), int(Mt), int(Ds), int(Rg), int(Cn), int(Uut), int(Fl), int(Uup), int(Lv), int(Uus), int(Uuo)])
-    oxelements = nd.array(['Ac', 'Ag', 'Al', 'Am', 'Ar', 'As', 'At', 'Au', 'B', 'Ba', 'Be', 'Bh', 'Bi', 'Bk', 'Br', 'C', 'Ca', 'Ca', 'Cd', 'Ce', 'Cf', 'Cl', 'Cm', 'Cn', 'Co', 'Cr', 'Cr', 'Cs', 'Cu', 'Db', 'Ds', 'Dy', 'Er', 'Es', 'Eu', 'F', 'Fe', 'Fl', 'Fm', 'Fr', 'Ga', 'Gd', 'Ge', 'H', 'He', 'Hf', 'Hg', 'Ho', 'Hs', 'I', 'In', 'Ir', 'K', 'K', 'Kr', 'La', 'Li', 'Lr', 'Lu', 'Lv', 'Md', 'Mg', 'Mn', 'Mo', 'Mo', 'Mt', 'N', 'Na', 'Nb', 'Nb', 'Nd', 'Ne', 'Ni', 'No', 'Np', 'Os', 'P', 'Pa', 'Pb', 'Pd', 'Pm', 'Po', 'Pr', 'Pt', 'Pu', 'Ra', 'Rb', 'Rb', 'Re', 'Rf', 'Rg', 'Rh', 'Rn', 'Ru', 'S', 'Sb', 'Sc', 'Sc', 'Se', 'Sg', 'Si', 'Sm', 'Sn', 'Sr', 'Sr', 'Ta', 'Tb', 'Tc', 'Te', 'Th', 'Ti', 'Ti', 'Tl', 'Tm', 'U', 'Uuo', 'Uup', 'Uus', 'Uut', 'V', 'V', 'W', 'Xe', 'Y', 'Y', 'Yb', 'Zn', 'Zr', 'Zr', 'O'])
-    oxclicks = np.array([int(Ac), int(Ag), int(Al), int(Am), int(Ar), int(As), int(At), int(Au), int(B), int(Ba), int(Be), int(Bh), int(Bi), int(Bk), int(Br), int(C), int(Ca), int(Ca1), int(Cd), int(Ce), int(Cf), int(Cl), int(Cm), int(Cn), int(Co), int(Cr), int(Cr1), int(Cs), int(Cu), int(Db), int(Ds), int(Dy), int(Er), int(Es), int(Eu), int(F), int(Fe), int(Fl), int(Fm), int(Fr), int(Ga), int(Gd), int(Ge), int(H), int(He), int(Hf), int(Hg), int(Ho), int(Hs), int(I), int(In), int(Ir), int(K), int(K1), int(Kr), int(La), int(Li), int(Lr), int(Lu), int(Lv), int(Md), int(Mg), int(Mn), int(Mo), int(Mo1), int(Mt), int(N), int(Na), int(Nb), int(Nb1), int(Nd), int(Ne), int(Ni), int(No), int(Np), int(Os), int(P), int(Pa), int(Pb), int(Pd), int(Pm), int(Po), int(Pr), int(Pt), int(Pu), int(Ra), int(Rb), int(Rb1), int(Re), int(Rf), int(Rg), int(Rh), int(Rn), int(Ru), int(S), int(Sb), int(Sc), int(Sc1), int(Se), int(Sg), int(Si), int(Sm), int(Sn), int(Sr), int(Sr1), int(Ta), int(Tb), int(Tc), int(Te), int(Th), int(Ti), int(Ti1), int(Tl), int(Tm), int(U), int(Uuo), int(Uup), int(Uus), int(Uut), int(V), int(V1), int(W), int(Xe), int(Y), int(Y1), int(Yb), int(Zn), int(Zr), int(Zr1), int(O)])
-    hydelements = nd.array(['Ac', 'Ag', 'Al', 'Am', 'Ar', 'As', 'At', 'Au', 'B', 'Ba', 'Be', 'Bh', 'Bi', 'Bk', 'Br', 'C', 'Ca', 'Ca', 'Cd', 'Ce', 'Cf', 'Cl', 'Cm', 'Cn', 'Co', 'Cr', 'Cr', 'Cs', 'Cu', 'Db', 'Ds', 'Dy', 'Er', 'Es', 'Eu', 'F', 'Fe', 'Fl', 'Fm', 'Fr', 'Ga', 'Gd', 'Ge', 'He', 'Hf', 'Hg', 'Ho', 'Hs', 'I', 'In', 'Ir', 'K', 'K1', 'Kr', 'La', 'Li', 'Lr', 'Lu', 'Lv', 'Md', 'Mg', 'Mn', 'Mo', 'Mo', 'Mt', 'N', 'Na', 'Nb', 'Nb', 'Nd', 'Ne', 'Ni', 'No', 'Np', 'Os', 'P', 'Pa', 'Pb', 'Pd', 'Pm', 'Po', 'Pr', 'Pt', 'Pu', 'Ra', 'Rb', 'Rb', 'Re', 'Rf', 'Rg', 'Rh', 'Rn', 'Ru', 'S', 'Sb', 'Sc', 'Sc', 'Se', 'Sg', 'Si', 'Sm', 'Sn', 'Sr', 'Sr', 'Ta', 'Tb', 'Tc', 'Te', 'Th', 'Ti', 'Ti', 'Tl', 'Tm', 'U', 'Uuo', 'Uup', 'Uus', 'Uut', 'V', 'V', 'W', 'Xe', 'Y', 'Y', 'Yb', 'Zn', 'Zr', 'Zr', 'O', 'H'])
-    hydclicks = np.array([int(Ac), int(Ag), int(Al), int(Am), int(Ar), int(As), int(At), int(Au), int(B), int(Ba), int(Be), int(Bh), int(Bi), int(Bk), int(Br), int(C), int(Ca), int(Ca1), int(Cd), int(Ce), int(Cf), int(Cl), int(Cm), int(Cn), int(Co), int(Cr), int(Cr1), int(Cs), int(Cu), int(Db), int(Ds), int(Dy), int(Er), int(Es), int(Eu), int(F), int(Fe), int(Fl), int(Fm), int(Fr), int(Ga), int(Gd), int(Ge), int(He), int(Hf), int(Hg), int(Ho), int(Hs), int(I), int(In), int(Ir), int(K), int(K1), int(Kr), int(La), int(Li), int(Lr), int(Lu), int(Lv), int(Md), int(Mg), int(Mn), int(Mo), int(Mo1), int(Mt), int(N), int(Na), int(Nb), int(Nb1), int(Nd), int(Ne), int(Ni), int(No), int(Np), int(Os), int(P), int(Pa), int(Pb), int(Pd), int(Pm), int(Po), int(Pr), int(Pt), int(Pu), int(Ra), int(Rb), int(Rb1), int(Re), int(Rf), int(Rg), int(Rh), int(Rn), int(Ru), int(S), int(Sb), int(Sc), int(Sc1), int(Se), int(Sg), int(Si), int(Sm), int(Sn), int(Sr), int(Sr1), int(Ta), int(Tb), int(Tc), int(Te), int(Th), int(Ti), int(Ti1), int(Tl), int(Tm), int(U), int(Uuo), int(Uup), int(Uus), int(Uut), int(V), int(V1), int(W), int(Xe), int(Y), int(Y1), int(Yb), int(Zn), int(Zr), int(Zr1), int(O), int(H)])
+    elements = {'C': int(C), 'H': int(H), 'Ac': int(Ac), 'Ag': int(Ag), 'Al': int(Al), 'Am': int(Am), 'Ar': int(Ar), 'As': int(As), 'At': int(At), 'Au': int(Au), 'B': int(B), 'Ba': int(Ba), 'Be': int(Be), 'Bh': int(Bh), 'Bi': int(Bi), 'Bk': int(Bk), 'Br': int(Br), 'Ca': int(Ca), 'Ca': int(Ca1), 'Cd': int(Cd), 'Ce': int(Ce), 'Cf': int(Cf), 'Cl': int(Cl), 'Cm': int(Cm), 'Cn': int(Cn), 'Co': int(Co), 'Cr': int(Cr), 'Cr': int(Cr1), 'Cs': int(Cs), 'Cu': int(Cu), 'Db': int(Db), 'Ds': int(Ds), 'Dy': int(Dy), 'Er': int(Er), 'Es': int(Es), 'Eu': int(Eu), 'F': int(F), 'Fe': int(Fe), 'Fl': int(Fl), 'Fm': int(Fm), 'Fr': int(Fr), 'Ga': int(Ga), 'Gd': int(Gd), 'Ge': int(Ge), 'He': int(He), 'Hf': int(Hf), 'Hg': int(Hg), 'Ho': int(Ho), 'Hs': int(Hs), 'I': int(I), 'In': int(In), 'Ir': int(Ir), 'K': int(K), 'K': int(K1), 'Kr': int(Kr), 'La': int(La), 'Li': int(Li), 'Lr': int(Lr), 'Lu': int(Lu), 'Lv': int(Lv), 'Md': int(Md), 'Mg': int(Mg), 'Mn': int(Mn), 'Mo': int(Mo), 'Mo': int(Mo1), 'Mt': int(Mt), 'N': int(N), 'Na': int(Na), 'Nb': int(Nb), 'Nb': int(Nb1), 'Nd': int(Nd), 'Ne': int(Ne), 'Ni': int(Ni), 'No': int(No), 'Np': int(Np), 'O': int(O), 'Os': int(Os), 'P': int(P), 'Pa': int(Pa), 'Pb': int(Pb), 'Pd': int(Pd), 'Pm': int(Pm), 'Po': int(Po), 'Pr': int(Pr), 'Pt': int(Pt), 'Pu': int(Pu), 'Ra': int(Ra), 'Rb': int(Rb), 'Rb': int(Rb1), 'Re': int(Re), 'Rf': int(Rf), 'Rg': int(Rg), 'Rh': int(Rh), 'Rn': int(Rn), 'Ru': int(Ru), 'S': int(S), 'Sb': int(Sb), 'Sc': int(Sc), 'Sc': int(Sc1), 'Se': int(Se), 'Sg': int(Sg), 'Si': int(Si), 'Sm': int(Sm), 'Sn': int(Sn), 'Sr': int(Sr), 'Sr': int(Sr1), 'Ta': int(Ta), 'Tb': int(Tb), 'Tc': int(Tc), 'Te': int(Te), 'Th': int(Th), 'Ti': int(Ti), 'Ti': int(Ti1), 'Tl': int(Tl), 'Tm': int(Tm), 'U': int(U), 'Uuo': int(Uuo), 'Uup': int(Uup), 'Uus': int(Uus), 'Uut': int(Uut), 'V': int(V), 'V': int(V1), 'W': int(W), 'Xe': int(Xe), 'Y': int(Y), 'Y': int(Y1), 'Yb': int(Yb), 'Zn': int(Zn), 'Zr': int(Zr), 'Zr': int(Zr1)}
+    
+    ions = {'Cs': int(Cs),'Fr': int(Fr),'K': int(K),'K': int(K1),'Rb': int(Rb),'Rb': int(Rb1),'Ba': int(Ba),'Ra': int(Ra),'Na': int(Na),'Sr': int(Sr),'Sr': int(Sr1),'Li': int(Li),'Ca': int(Ca),'Ca': int(Ca1),'Yb': int(Yb),'La': int(La),'Ac': int(Ac),'Ce': int(Ce),'Pr': int(Pr),'Pm': int(Pm),'Nd': int(Nd),'Sm': int(Sm),'Tb': int(Tb),'Gd': int(Gd),'Eu': int(Eu),'Dy': int(Dy),'Y': int(Y),'Y': int(Y1),'Ho': int(Ho),'Er': int(Er),'Tm': int(Tm),'Lu': int(Lu),'Pu': int(Pu),'No': int(No),'Es': int(Es),'Th': int(Th),'Hf': int(Hf),'Md': int(Md),'Bk': int(Bk),'Am': int(Am),'Lr': int(Lr),'Cf': int(Cf),'Cm': int(Cm),'Fm': int(Fm),'Mg': int(Mg),'Zr': int(Zr),'Zr': int(Zr1),'Np': int(Np),'Sc': int(Sc),'Sc': int(Sc1),'U': int(U),'Ta': int(Ta),'Pa': int(Pa),'Ti': int(Ti),'Ti': int(Ti1),'Mn': int(Mn),'Be': int(Be),'Nb': int(Nb),'Nb': int(Nb1),'Al': int(Al),'V': int(V),'V': int(V1),'Zn': int(Zn),'Cr': int(Cr),'Cr': int(Cr1),'Cd': int(Cd),'In': int(In),'Ga': int(Ga),'Fe': int(Fe),'Co': int(Co),'Si': int(Si),'Re': int(Re),'Tc': int(Tc),'Cu': int(Cu),'Ni': int(Ni),'Ag': int(Ag),'Sn': int(Sn),'Po': int(Po),'Hg': int(Hg),'Ge': int(Ge),'Bi': int(Bi),'Tl': int(Tl),'B': int(B),'Sb': int(Sb),'Te': int(Te),'Mo': int(Mo),'Mo': int(Mo1),'As': int(As),'P': int(P),'H': int(H),'Ir': int(Ir),'Ru': int(Ru),'Os': int(Os),'At': int(At),'Rn': int(Rn),'Pd': int(Pd),'Pt': int(Pt),'Rh': int(Rh),'Pb': int(Pb),'W': int(W),'Au': int(Au),'C': int(C),'Se': int(Se),'S': int(S),'Xe': int(Xe),'I': int(I),'Br': int(Br),'Kr': int(Kr),'N': int(N),'Cl': int(Cl),'O': int(O),'F': int(F),'He': int(He),'Ne': int(Ne),'Ar': int(Ar),'Rf': int(Rf),'Db': int(Db),'Sg': int(Sg),'Bh': int(Bh),'Hs': int(Hs),'Mt': int(Mt),'Ds': int(Ds),'Rg': int(Rg),'Cn': int(Cn),'Uut': int(Uut),'Fl': int(Fl),'Uup': int(Uup),'Lv': int(Lv),'Uus': int(Uus),'Uuo': int(Uuo)}
+    
+    oxelements = {'Ac': int(Ac), 'Ag': int(Ag), 'Al': int(Al), 'Am': int(Am), 'Ar': int(Ar), 'As': int(As), 'At': int(At), 'Au': int(Au), 'B': int(B), 'Ba': int(Ba), 'Be': int(Be), 'Bh': int(Bh), 'Bi': int(Bi), 'Bk': int(Bk), 'Br': int(Br), 'C': int(C), 'Ca': int(Ca), 'Ca': int(Ca1), 'Cd': int(Cd), 'Ce': int(Ce), 'Cf': int(Cf), 'Cl': int(Cl), 'Cm': int(Cm), 'Cn': int(Cn), 'Co': int(Co), 'Cr': int(Cr), 'Cr': int(Cr1), 'Cs': int(Cs), 'Cu': int(Cu), 'Db': int(Db), 'Ds': int(Ds), 'Dy': int(Dy), 'Er': int(Er), 'Es': int(Es), 'Eu': int(Eu), 'F': int(F), 'Fe': int(Fe), 'Fl': int(Fl), 'Fm': int(Fm), 'Fr': int(Fr), 'Ga': int(Ga), 'Gd': int(Gd), 'Ge': int(Ge), 'H': int(H), 'He': int(He), 'Hf': int(Hf), 'Hg': int(Hg), 'Ho': int(Ho), 'Hs': int(Hs), 'I': int(I), 'In': int(In), 'Ir': int(Ir), 'K': int(K), 'K': int(K1), 'Kr': int(Kr), 'La': int(La), 'Li': int(Li), 'Lr': int(Lr), 'Lu': int(Lu), 'Lv': int(Lv), 'Md': int(Md), 'Mg': int(Mg), 'Mn': int(Mn), 'Mo': int(Mo), 'Mo': int(Mo1), 'Mt': int(Mt), 'N': int(N), 'Na': int(Na), 'Nb': int(Nb), 'Nb': int(Nb1), 'Nd': int(Nd), 'Ne': int(Ne), 'Ni': int(Ni), 'No': int(No), 'Np': int(Np), 'Os': int(Os), 'P': int(P), 'Pa': int(Pa), 'Pb': int(Pb), 'Pd': int(Pd), 'Pm': int(Pm), 'Po': int(Po), 'Pr': int(Pr), 'Pt': int(Pt), 'Pu': int(Pu), 'Ra': int(Ra), 'Rb': int(Rb), 'Rb': int(Rb1), 'Re': int(Re), 'Rf': int(Rf), 'Rg': int(Rg), 'Rh': int(Rh), 'Rn': int(Rn), 'Ru': int(Ru), 'S': int(S), 'Sb': int(Sb), 'Sc': int(Sc), 'Sc': int(Sc1), 'Se': int(Se), 'Sg': int(Sg), 'Si': int(Si), 'Sm': int(Sm), 'Sn': int(Sn), 'Sr': int(Sr), 'Sr': int(Sr1), 'Ta': int(Ta), 'Tb': int(Tb), 'Tc': int(Tc), 'Te': int(Te), 'Th': int(Th), 'Ti': int(Ti), 'Ti': int(Ti1), 'Tl': int(Tl), 'Tm': int(Tm), 'U': int(U), 'Uuo': int(Uuo), 'Uup': int(Uup), 'Uus': int(Uus), 'Uut': int(Uut), 'V': int(V), 'V': int(V1), 'W': int(W), 'Xe': int(Xe), 'Y': int(Y), 'Y': int(Y1), 'Yb': int(Yb), 'Zn': int(Zn), 'Zr': int(Zr), 'Zr': int(Zr1), 'O': int(O)}
+    
+    hydelements = {'Ac': int(Ac), 'Ag': int(Ag), 'Al': int(Al), 'Am': int(Am), 'Ar': int(Ar), 'As': int(As), 'At': int(At), 'Au': int(Au), 'B': int(B), 'Ba': int(Ba), 'Be': int(Be), 'Bh': int(Bh), 'Bi': int(Bi), 'Bk': int(Bk), 'Br': int(Br), 'C': int(C), 'Ca': int(Ca), 'Ca': int(Ca1), 'Cd': int(Cd), 'Ce': int(Ce), 'Cf': int(Cf), 'Cl': int(Cl), 'Cm': int(Cm), 'Cn': int(Cn), 'Co': int(Co), 'Cr': int(Cr), 'Cr': int(Cr1), 'Cs': int(Cs), 'Cu': int(Cu), 'Db': int(Db), 'Ds': int(Ds), 'Dy': int(Dy), 'Er': int(Er), 'Es': int(Es), 'Eu': int(Eu), 'F': int(F), 'Fe': int(Fe), 'Fl': int(Fl), 'Fm': int(Fm), 'Fr': int(Fr), 'Ga': int(Ga), 'Gd': int(Gd), 'Ge': int(Ge), 'He': int(He), 'Hf': int(Hf), 'Hg': int(Hg), 'Ho': int(Ho), 'Hs': int(Hs), 'I': int(I), 'In': int(In), 'Ir': int(Ir), 'K': int(K), 'K1': int(K1), 'Kr': int(Kr), 'La': int(La), 'Li': int(Li), 'Lr': int(Lr), 'Lu': int(Lu), 'Lv': int(Lv), 'Md': int(Md), 'Mg': int(Mg), 'Mn': int(Mn), 'Mo': int(Mo), 'Mo': int(Mo1), 'Mt': int(Mt), 'N': int(N), 'Na': int(Na), 'Nb': int(Nb), 'Nb': int(Nb1), 'Nd': int(Nd), 'Ne': int(Ne), 'Ni': int(Ni), 'No': int(No), 'Np': int(Np), 'Os': int(Os), 'P': int(P), 'Pa': int(Pa), 'Pb': int(Pb), 'Pd': int(Pd), 'Pm': int(Pm), 'Po': int(Po), 'Pr': int(Pr), 'Pt': int(Pt), 'Pu': int(Pu), 'Ra': int(Ra), 'Rb': int(Rb), 'Rb': int(Rb1), 'Re': int(Re), 'Rf': int(Rf), 'Rg': int(Rg), 'Rh': int(Rh), 'Rn': int(Rn), 'Ru': int(Ru), 'S': int(S), 'Sb': int(Sb), 'Sc': int(Sc), 'Sc': int(Sc1), 'Se': int(Se), 'Sg': int(Sg), 'Si': int(Si), 'Sm': int(Sm), 'Sn': int(Sn), 'Sr': int(Sr), 'Sr': int(Sr1), 'Ta': int(Ta), 'Tb': int(Tb), 'Tc': int(Tc), 'Te': int(Te), 'Th': int(Th), 'Ti': int(Ti), 'Ti': int(Ti1), 'Tl': int(Tl), 'Tm': int(Tm), 'U': int(U), 'Uuo': int(Uuo), 'Uup': int(Uup), 'Uus': int(Uus), 'Uut': int(Uut), 'V': int(V), 'V': int(V1), 'W': int(W), 'Xe': int(Xe), 'Y': int(Y), 'Y': int(Y1), 'Yb': int(Yb), 'Zn': int(Zn), 'Zr': int(Zr), 'Zr': int(Zr1), 'O': int(O), 'H': int(H)}
     if button == 'organic':
         elements = elements
-        clicks = clicks
     elif button == 'ionic':
         temp1 = elements
         elements = ions
         ions = temp1
-        temp2 = clicks
-        clicks = ionclicks
-        ionclicks = temp2  
     elif button == 'oxide':
         temp3 = elements
         elements = oxelements
         oxelements = temp3
-        temp4 = clicks
-        clicks = oxclicks
-        oxclicks = temp4
     elif button == 'hydro':
         temp5 = elements
         elements = hydelements
         hydelements = temp5
-        temp6 = clicks
-        clicks = hydclicks
-        hydclicks = temp6
-    elimin9 = [clicks == 0]
-    mask2 = ma.masked_array(elements, elimin9)
-    mask2=mask2.tolist()
-    abb= [i for i in mask2 if i is not None]
-    elimin10 = [clicks == 0]
-    mask4 = ma.masked_array(elimin10, clicks)
-    mask5 = ma.masked_array(clicks, mask4)
-    mask5=mask5.tolist()
-    num= [i for i in mask5 if i is not None]
-    zipped=zip(abb, num)
-    ziplist=(list(zipped))
-    ziplist=str(ziplist)
-    ziplist=ziplist.replace(' 1), ', '')
-    ziplist=ziplist.replace("(\'", "")
-    ziplist=ziplist.replace(" 1)]", "")
-    ziplist=ziplist.replace("\', ", "")
-    ziplist=ziplist.replace("\',", "")
-    ziplist=ziplist.replace(")]", "")
-    ziplist=ziplist.replace("[", "")
-    ziplist=ziplist.replace("), ", "")
-    ziplist=ziplist.replace("]", "")
-    ziplist=ziplist.replace("\'-\'", "-")
-    if ziplist == 'HN4Cl':
-        ziplist = 'NH4Cl'
-    elif ziplist == 'AlO3H3':
-        ziplist = 'Al(OH)3'
-    elif ziplist == 'AlN3O6':
-        ziplist = 'Al(NO2)3'
-    elif ziplist == 'AlN3O9':
-        ziplist = 'Al(NO3)3'
-    elif ziplist == 'Al2C3O9':
-        ziplist = 'Al2(CO3)3'
-    elif ziplist == 'Al2S3O12':
-        ziplist = 'Al2(SO4)3'
-    elif ziplist == 'Al2Si2O9H4':
-        ziplist = 'Al2Si2O5(OH)4'
-    elif ziplist == 'AuO3H3':
-        ziplist = 'Au(OH)3'
-    elif ziplist == 'Au2Se3O12':
-        ziplist = 'Au2(SeO4)3'
-    elif ziplist == 'LiH':
-        ziplist = 'DLi'
-    elif ziplist == 'HBr':
-        ziplist = 'DBr'
-    elif ziplist == 'KBr':
-        ziplist = 'KBR'
-    ziplist1=[]
-    ziplist1.append(ziplist)
-    sum_clicks = np.sum(clicks).tolist()
-    sum_clicks2=str(sum_clicks)
-    total=[]
-    if sum_clicks >= 1:
-        total.append(sum_clicks2)
-        total.append(abb)
-        total.append(ziplist1)
-        return json.dumps(total)
-    elif sum_clicks==0:
+
+
+    vip = dict((k, v) for k, v in elements.items() if v >= 1)
+    ziplist=str(vip)
+    ziplist=ziplist.replace(": 1, \'", "")
+    ziplist=ziplist.replace("{/''", "")
+    ziplist=ziplist.replace(" 1}", "")
+    ziplist=ziplist.replace(", \'", "")
+    ziplist=ziplist.replace("\'", "")
+    ziplist=ziplist.replace("}", "")
+    ziplist=ziplist.replace("{", "")
+    ziplist=ziplist.replace(":", "")
+    ziplist=ziplist.replace(" ", "")
+    if ziplist !='':
+        if ziplist == 'HN4Cl':
+            ziplist = 'NH4Cl'
+        elif ziplist == 'AlO3H3':
+            ziplist = 'Al(OH)3'
+        elif ziplist == 'AlN3O6':
+            ziplist = 'Al(NO2)3'
+        elif ziplist == 'AlN3O9':
+            ziplist = 'Al(NO3)3'
+        elif ziplist == 'Al2C3O9':
+            ziplist = 'Al2(CO3)3'
+        elif ziplist == 'Al2S3O12':
+            ziplist = 'Al2(SO4)3'
+        elif ziplist == 'Al2Si2O9H4':
+            ziplist = 'Al2Si2O5(OH)4'
+        elif ziplist == 'AuO3H3':
+            ziplist = 'Au(OH)3'
+        elif ziplist == 'Au2Se3O12':
+            ziplist = 'Au2(SeO4)3'
+        elif ziplist == 'LiH':
+            ziplist = 'DLi'
+        elif ziplist == 'HBr':
+            ziplist = 'DBr'
+        elif ziplist == 'KBr':
+            ziplist = 'KBR'
+        return json.dumps(ziplist)
+    else:
         reset = ['']
-        total.append(sum_clicks2)
-        total.append(abb)
-        total.append(ziplist1)
-        return json.dumps(total)
+        return json.dumps(reset)
 
 @app.callback(
     Output(component_id='container', component_property='children'),
@@ -1369,481 +1348,212 @@ def label(interbutton):
     [Input('intermediate-value', 'children')])
 def update(intermediatevalue):
     jg=json.loads(intermediatevalue)
-    fg=jg[-1]
-    return fg[0]
+    return jg
         
 
 @app.callback(
     Output('textbox-2', 'value'),
-    [Input('intermediate-value', 'children')])
-def update(intermediatevalue):
-    jg=json.loads(intermediatevalue)
-    zsum = int(jg[0])
-    fg=jg[-1]
-    chem = fg[0]
-    if zsum == 0:
-        return 'No data'
-    else:
-        try:
-            url = "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/wiki/Dictionary_of_chemical_formulas.html"
-            html = urlopen(url)
-            
-            soup = BeautifulSoup(html, 'lxml')
-            type(soup)
-            
-            c1 = soup.findChildren(attrs={'id': 'mwB1w'})[0] 
-            c1 = pd.read_html(str(c1))
-            c1= (c1[0].to_json(orient='split'))
-            c1 = pd.read_json(c1, orient='split')
-            
-            c2 = soup.findChildren(attrs={'id': 'mwEtM'})[0] 
-            c2 = pd.read_html(str(c2))
-            c2= (c2[0].to_json(orient='split'))
-            c2 = pd.read_json(c2, orient='split')
-            
-            cframes = [c1, c2]
-            cframes = pd.concat(cframes, sort=True)
-        
-            chem1 = str(chem)
-            chem1=chem1.replace("[", "")
-            chem1=chem1.replace("]", "")
-            chemlen = len(chem1)
-    
-        # Get the title
-    
-            if chem[0] == 'A':
-                a = soup.findChildren(attrs={'id': 'mwKA'})[0] 
-                a = pd.read_html(str(a))
-                a= (a[0].to_json(orient='split'))
-                df = pd.read_json(a, orient='split')
-        
-            elif chem[0] == 'B':
-                b = soup.findChildren(attrs={'id': 'mwBBM'})[0] 
-                b = pd.read_html(str(b))
-                b= (b[0].to_json(orient='split'))
-                df = pd.read_json(b, orient='split')
-        
-            elif chem[0] == 'C':
-                df = cframes
-        
-            elif chem[0] == 'D':
-                d = soup.findChildren(attrs={'id': 'mwGao'})[0] 
-                d = pd.read_html(str(d))
-                d= (d[0].to_json(orient='split'))
-                df = pd.read_json(d, orient='split')
-        
-            elif chem[0] == 'E':
-                e = soup.findChildren(attrs={'id': 'mwGfc'})[0] 
-                e = pd.read_html(str(e))
-                e= (e[0].to_json(orient='split'))
-                df = pd.read_json(e, orient='split')
-        
-            elif chem[0] == 'F':
-                f = soup.findChildren(attrs={'id': 'mwGoA'})[0] 
-                f = pd.read_html(str(f))
-                f= (f[0].to_json(orient='split'))
-                df = pd.read_json(f, orient='split')
-        
-            elif chem[0] == 'G':
-                g = soup.findChildren(attrs={'id': 'mwIJQ'})[0] 
-                g = pd.read_html(str(g))
-                g= (g[0].to_json(orient='split'))
-                df = pd.read_json(g, orient='split')
-        
-            elif chem[0] == 'H':
-                h = soup.findChildren(attrs={'id': 'mwISM'})[0] 
-                h = pd.read_html(str(h))
-                h= (h[0].to_json(orient='split'))
-                df = pd.read_json(h, orient='split')
-        
-            elif chem[0] == 'I':
-                i = soup.findChildren(attrs={'id': 'mwJBE'})[0] 
-                i = pd.read_html(str(i))
-                i= (i[0].to_json(orient='split'))
-                df = pd.read_json(i, orient='split')
-        
-            elif chem[0] == 'K':
-                k = soup.findChildren(attrs={'id': 'mwJOo'})[0] 
-                k = pd.read_html(str(k))
-                k= (k[0].to_json(orient='split'))
-                df = pd.read_json(k, orient='split')
-        
-            elif chem[0] == 'L':
-                k4 = soup.findChildren(attrs={'id': 'mwJdM'})[0]
-                k4 = pd.read_html(str(k4))
-                k4= (k4[0].to_json(orient='split'))
-                df = pd.read_json(k4, orient='split')
-        
-            elif chem[0] == 'M':
-                m = soup.findChildren(attrs={'id': 'mwJxk'})[0] 
-                m = pd.read_html(str(m))
-                m= (m[0].to_json(orient='split'))
-                df = pd.read_json(m, orient='split')
-        
-            elif chem[0] == 'N':
-                n = soup.findChildren(attrs={'id': 'mwKS8'})[0] 
-                n = pd.read_html(str(n))
-                n= (n[0].to_json(orient='split'))
-                df = pd.read_json(n, orient='split')
-        
-            elif chem[0] == 'O':
-                o = soup.findChildren(attrs={'id': 'mwLNU'})[0] 
-                o = pd.read_html(str(o))
-                o= (o[0].to_json(orient='split'))
-                df = pd.read_json(o, orient='split')
-        
-            elif chem[0] == 'P':
-                p = soup.findChildren(attrs={'id': 'mwLRk'})[0] 
-                p = pd.read_html(str(p))
-                p= (p[0].to_json(orient='split'))
-                df = pd.read_json(p, orient='split')
-        
-            elif chem[0] == 'R':
-                r = soup.findChildren(attrs={'id': 'mwLeA'})[0] 
-                r = pd.read_html(str(r))
-                r= (r[0].to_json(orient='split'))
-                df = pd.read_json(r, orient='split')
-        
-            elif chem[0] == 'S':
-                s = soup.findChildren(attrs={'id': 'mwLoU'})[0] 
-                s = pd.read_html(str(s))
-                s= (s[0].to_json(orient='split'))
-                df = pd.read_json(s, orient='split')
-        
-            elif chem[0] == 'T':
-                t = soup.findChildren(attrs={'id': 'mwMNw'})[0] 
-                t = pd.read_html(str(t))
-                t= (t[0].to_json(orient='split'))
-                df = pd.read_json(t, orient='split')
-        
-            elif chem[0] == 'U':
-                u = soup.findChildren(attrs={'id': 'mwMgg'})[0] 
-                u = pd.read_html(str(u))
-                u= (u[0].to_json(orient='split'))
-                df = pd.read_json(u, orient='split')
-        
-            elif chem[0] == 'V':
-                v = soup.findChildren(attrs={'id': 'mwMnA'})[0] 
-                v = pd.read_html(str(v))
-                v= (v[0].to_json(orient='split'))
-                df = pd.read_json(v, orient='split')
-        
-            elif chem[0] == 'W':
+    [Input('intermediate-value', 'children'),
+     Input('search', 'n_clicks')])
+def update(intermediatevalue, nclicks):
+    if int(nclicks) > 0:
+        chem=json.loads(intermediatevalue)
+        if chem[0] == '':
+            return 'No data'
+        else:
+            try:
+                url = "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/wiki/Dictionary_of_chemical_formulas.html"
+                html = urlopen(url)
                 
-                w = soup.findChildren(attrs={'id': 'mwMrI'})[0] 
-                w = pd.read_html(str(w))
-                w= (w[0].to_json(orient='split'))
-                df = pd.read_json(w, orient='split')
+                soup = BeautifulSoup(html, 'lxml')
+                type(soup)
+                
+                chem1 = str(chem)
+                chem1=chem1.replace("[", "")
+                chem1=chem1.replace("]", "")
+                chemlen = len(chem1)
         
-            elif chem[0] == 'Y':
-                y = soup.findChildren(attrs={'id': 'mwM34'})[0] 
-                y = pd.read_html(str(y))
-                y= (y[0].to_json(orient='split'))
-                df = pd.read_json(y, orient='split')
+            # Get the title
         
-            elif chem[0] == 'Z':
-                z = soup.findChildren(attrs={'id': 'mwNCM'})[0] 
-                z = pd.read_html(str(z))
-                z= (z[0].to_json(orient='split'))
-                df = pd.read_json(z, orient='split')
-            df = pd.DataFrame(df)    
-            df = df.loc[df[0] == chem]
-            df.columns = ['Chemical Formula', 'Synonyms', 'CAS Number']
-            df = str(df)
-            if df[0:5] == 'Empty':
-                return 'No data. Either our database is incomplete, the element you entered is physically impossible, or you have discovered a new chemical compound.'
-            else:
-                return df
-        except KeyError:
-            return 'No data.'
+                if chem[0] == 'C':
+                    c1 = soup.findChildren(attrs={'id': 'mwB1w'})[0] 
+                    c1 = pd.read_html(str(c1))
+                    c1= (c1[0].to_json(orient='split'))
+                    c1 = pd.read_json(c1, orient='split')
+                    
+                    c2 = soup.findChildren(attrs={'id': 'mwEtM'})[0] 
+                    c2 = pd.read_html(str(c2))
+                    c2= (c2[0].to_json(orient='split'))
+                    c2 = pd.read_json(c2, orient='split')
+                    
+                    cframes = [c1, c2]
+                    cframes = pd.concat(cframes, sort=True)
+                    df = cframes
+            
+                else:
+                    d = soup.findChildren(attrs={'id': periodics[chem[0]]})[0] 
+                    d = pd.read_html(str(d))
+                    d= (d[0].to_json(orient='split'))
+                    df = pd.read_json(d, orient='split')
+
+                df = pd.DataFrame(df)    
+                df = df.loc[df[0] == chem]
+                df.columns = ['Chemical Formula', 'Synonyms', 'CAS Number']
+                df = str(df)
+                if df[0:5] == 'Empty':
+                    return 'No data. Either our database is incomplete, the element you entered is physically impossible, or you have discovered a new chemical compound.'
+                else:
+                    return df
+            except KeyError:
+                return 'No data.'
+    else:
+        return 'No data.'
 
 
 @app.callback(
     Output('interweb', 'children'),
-    [Input('intermediate-value', 'children')])
-def update(intermediatevalue):
-    zsum1 = json.loads(intermediatevalue)
-    zsum = int(zsum1[0])
-    fg=zsum1[-1]
-    chem = fg[0]
-    if zsum != 0:
-        try:
-            chemlen = len(chem)
-            #get hrefs
-            url = "https://en.wikipedia.org/wiki/Dictionary_of_chemical_formulas?oldid=752654140"
-            html = urlopen(url)
-            soup = BeautifulSoup(html, 'lxml')
-            type(soup)
-            all_links = soup.find_all("a")
-            list_links = []
-            for link in all_links:
-                cleaned = link.get("href")
-                list_links.append(cleaned)
-            a1 = list_links[:245]
-            b1=list_links[246:273]
-            c1=list_links[274:311]
-            d1=list_links[312:441]
-            e1=list_links[442:443]
-            f1=list_links[444:448]
-            g1=list_links[449:455]
-            h1=list_links[456:463]
-            i1=list_links[464:467]
-            j1=list_links[470:489]
-            k1=list_links[490:496]
-            l1=list_links[498:501]
-            m1=list_links[502:508]
-            n1=list_links[515:533]
-            o1=list_links[534:543]
-            p1=list_links[544:555]
-            q1=list_links[557:561]
-            r1=list_links[565:568]
-            s1=list_links[569:570]
-            t1=list_links[572:573]
-            u1=list_links[576:577]
-            v1=list_links[578:580]
-            w1=list_links[581:583]
-            x1=list_links[585:590]
-            y1=list_links[591:595]
-            z1=list_links[596:597]
-            a2=list_links[598:599]
-            b2=list_links[600:615]
-            c2=list_links[616:621]
-            d2=list_links[622:623]
-            e2=list_links[624:627]
-            f2=list_links[628:641]
-            g2=list_links[642:643]
-            h2=list_links[647:650]
-            i2=list_links[652:653]
-            j2=list_links[654:655]
-            k2=list_links[656:657]
-            l2=list_links[660:663]
-            m2=list_links[664:699]
-            n2=list_links[700:718]
-            o2=list_links[720:749]
-            q2=list_links[752:982]
-            r2=list_links[983:1012]
-            s2=list_links[1013:1277]
-            t2=list_links[1278:1287]
-            u2=list_links[1289:1289]
-            v2=list_links[1290:1299]
-            w2=list_links[1301:1308]
-            x2=list_links[1309:1350]
-            y2=list_links[1351:1567]
-            z2=list_links[1568:1585]
-            a3=list_links[1586:1587]
-            b3=list_links[1588:1625]
-            c3=list_links[1626:2121]
-            d3=list_links[2122:2128]
+    [Input('intermediate-value', 'children'),
+     Input('search', 'n_clicks')])
+def update(intermediatevalue, nclicks):
+    if int(nclicks) > 0:
+        chem = json.loads(intermediatevalue)
+        if chem[0] != '':
+            try:
+                chemlen = len(chem)
+                #get hrefs
+                url = "https://en.wikipedia.org/wiki/Dictionary_of_chemical_formulas?oldid=752654140"
+                html = urlopen(url)
+                soup = BeautifulSoup(html, 'lxml')
+                type(soup)
+                all_links = soup.find_all("a")
+                list_links = []
+                for link in all_links:
+                    cleaned = link.get("href")
+                    list_links.append(cleaned)
+                a1 = list_links[:245]
+                b1=list_links[246:273]
+                c1=list_links[274:311]
+                d1=list_links[312:441]
+                e1=list_links[442:443]
+                f1=list_links[444:448]
+                g1=list_links[449:455]
+                h1=list_links[456:463]
+                i1=list_links[464:467]
+                j1=list_links[470:489]
+                k1=list_links[490:496]
+                l1=list_links[498:501]
+                m1=list_links[502:508]
+                n1=list_links[515:533]
+                o1=list_links[534:543]
+                p1=list_links[544:555]
+                q1=list_links[557:561]
+                r1=list_links[565:568]
+                s1=list_links[569:570]
+                t1=list_links[572:573]
+                u1=list_links[576:577]
+                v1=list_links[578:580]
+                w1=list_links[581:583]
+                x1=list_links[585:590]
+                y1=list_links[591:595]
+                z1=list_links[596:597]
+                a2=list_links[598:599]
+                b2=list_links[600:615]
+                c2=list_links[616:621]
+                d2=list_links[622:623]
+                e2=list_links[624:627]
+                f2=list_links[628:641]
+                g2=list_links[642:643]
+                h2=list_links[647:650]
+                i2=list_links[652:653]
+                j2=list_links[654:655]
+                k2=list_links[656:657]
+                l2=list_links[660:663]
+                m2=list_links[664:699]
+                n2=list_links[700:718]
+                o2=list_links[720:749]
+                q2=list_links[752:982]
+                r2=list_links[983:1012]
+                s2=list_links[1013:1277]
+                t2=list_links[1278:1287]
+                u2=list_links[1289:1289]
+                v2=list_links[1290:1299]
+                w2=list_links[1301:1308]
+                x2=list_links[1309:1350]
+                y2=list_links[1351:1567]
+                z2=list_links[1568:1585]
+                a3=list_links[1586:1587]
+                b3=list_links[1588:1625]
+                c3=list_links[1626:2121]
+                d3=list_links[2122:2128]
+                
+                list_links2= a1 + b1 + c1 + d1 + e1 + f1 + g1 + h1 + i1 + j1 + k1 + l1 + m1 + n1 + o1 + p1 + q1 + r1 + s1 + t1 + u1 + v1 + w1 + x1 + y1 + z1 + a2 + b2 + c2 + d2 + e2 + f2 + g2 + h2 + i2 + j2 + k2 + l2 + m2 + n2 + o2 + q2 + r2 + s2 + t2 + u2 + v2 + w2 + x2 + y2 + z2 + a3 + b3 + c3 + d3
+                
+                #Edit hrefs
+                #/wiki/1-Aminocyclopropanecarboxylic_acid
+                url3 = "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/wiki/Dictionary_of_chemical_formulas.html"
+                html3 = urlopen(url3)
+                
+                soup = BeautifulSoup(html3, 'lxml')
+                type(soup)
             
-            list_links2= a1 + b1 + c1 + d1 + e1 + f1 + g1 + h1 + i1 + j1 + k1 + l1 + m1 + n1 + o1 + p1 + q1 + r1 + s1 + t1 + u1 + v1 + w1 + x1 + y1 + z1 + a2 + b2 + c2 + d2 + e2 + f2 + g2 + h2 + i2 + j2 + k2 + l2 + m2 + n2 + o2 + q2 + r2 + s2 + t2 + u2 + v2 + w2 + x2 + y2 + z2 + a3 + b3 + c3 + d3
-            
-            #Edit hrefs
-            #/wiki/1-Aminocyclopropanecarboxylic_acid
-            url3 = "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/wiki/Dictionary_of_chemical_formulas.html"
-            html3 = urlopen(url3)
-            
-            soup = BeautifulSoup(html3, 'lxml')
-            type(soup)
-               
-            #List location
-            edit = [52, 212, 337, 675, 946, 952, 980, 1231, 1252, 1360, 1394, 1430, 1480, 1558, 1694, 1703, 1734, 1761, 1852, 1900, 1914, 1923, 1955, 1981]
-        
-            # Get the ref
-            if chemlen > 0:
-                if chem[0] == 'A':
-                    a = soup.findChildren(attrs={'id': 'mwKA'})[0] 
-                    a = pd.read_html(str(a))
-                    a= (a[0].to_json(orient='split'))
-                    df = pd.read_json(a, orient='split')
-                    startpos = edit[0]
-            
-                elif chem[0] == 'B':
-                    b = soup.findChildren(attrs={'id': 'mwBBM'})[0] 
-                    b = pd.read_html(str(b))
-                    b= (b[0].to_json(orient='split'))
-                    df = pd.read_json(b, orient='split')
-                    startpos = edit[1]
-            
-                elif chem[0] == 'C':
-                    abb =zsum1[1]
-                    if abb[0] == 'C':
-                            c1 = soup.findChildren(attrs={'id': 'mwB1w'})[0] 
-                            c1 = pd.read_html(str(c1))
-                            c1= (c1[0].to_json(orient='split'))
-                            df = pd.read_json(c1, orient='split')
-                            startpos = edit[2]
+                # Get the ref
+                if chemlen > 0:
+                    vibe=periodics[chem[0]]
+                    vide=edit[chem[0]]
+                    if chem[0] == 'C':
+                        abb =chem[1]
+                        ty = ['a', 'd', 'e', 'F', 'l', 'o', 'r', 's', 'u']
+                        try:
+                            ind=ty.index(abb)
+                            if ind == 4:
+                                abb2=chem[2]
+                                if abb2 == 'C':
+                                    d = soup.findChildren(attrs={'id': vibe[0]})[0] 
+                                    startpos = vide[0]
+                                else:
+                                    d = soup.findChildren(attrs={'id': vibe[1]})[0] 
+                                    startpos = vide[1]
+                            else:
+                                d = soup.findChildren(attrs={'id': vibe[1]})[0] 
+                                startpos = vide[1]
+                        except:
+                                d = soup.findChildren(attrs={'id': vibe[0]})[0] 
+                                startpos = vide[0]
+                        d = pd.read_html(str(d))
+                        d= (d[0].to_json(orient='split'))
+                        df = pd.read_json(d, orient='split')
+                
                     else:
-                            c2 = soup.findChildren(attrs={'id': 'mwEtM'})[0] 
-                            c2 = pd.read_html(str(c2))
-                            c2= (c2[0].to_json(orient='split'))
-                            df = pd.read_json(c2, orient='split')
-                            startpos = edit[3]
-            
-                elif chem[0] == 'D':
-                    d = soup.findChildren(attrs={'id': 'mwGao'})[0] 
-                    d = pd.read_html(str(d))
-                    d= (d[0].to_json(orient='split'))
-                    df = pd.read_json(d, orient='split')
-                    startpos = edit[4]
-            
-                elif chem[0] == 'E':
-                    e = soup.findChildren(attrs={'id': 'mwGfc'})[0] 
-                    e = pd.read_html(str(e))
-                    e= (e[0].to_json(orient='split'))
-                    df = pd.read_json(e, orient='split')
-                    startpos = edit[5]
-            
-                elif chem[0] == 'F':
-                    f = soup.findChildren(attrs={'id': 'mwGoA'})[0] 
-                    f = pd.read_html(str(f))
-                    f= (f[0].to_json(orient='split'))
-                    df = pd.read_json(f, orient='split')
-                    startpos = edit[6]
-            
-                elif chem[0] == 'G':
-                    g = soup.findChildren(attrs={'id': 'mwIJQ'})[0] 
-                    g = pd.read_html(str(g))
-                    g= (g[0].to_json(orient='split'))
-                    df = pd.read_json(g, orient='split')
-                    startpos = edit[7]
-            
-                elif chem[0] == 'H':
-                    h = soup.findChildren(attrs={'id': 'mwISM'})[0] 
-                    h = pd.read_html(str(h))
-                    h= (h[0].to_json(orient='split'))
-                    df = pd.read_json(h, orient='split')
-                    startpos = edit[8]
-            
-                elif chem[0] == 'I':
-                    i = soup.findChildren(attrs={'id': 'mwJBE'})[0] 
-                    i = pd.read_html(str(i))
-                    i= (i[0].to_json(orient='split'))
-                    df = pd.read_json(i, orient='split')
-                    startpos = edit[9]
-            
-                elif chem[0] == 'K':
-                    k = soup.findChildren(attrs={'id': 'mwJOo'})[0] 
-                    k = pd.read_html(str(k))
-                    k= (k[0].to_json(orient='split'))
-                    df = pd.read_json(k, orient='split')
-                    startpos = edit[10]
-            
-                elif chem[0] == 'L':
-                    k4 = soup.findChildren(attrs={'id': 'mwJdM'})[0]
-                    k4 = pd.read_html(str(k4))
-                    k4= (k4[0].to_json(orient='split'))
-                    df = pd.read_json(k4, orient='split')
-                    startpos = edit[11]
-            
-                elif chem[0] == 'M':
-                    m = soup.findChildren(attrs={'id': 'mwJxk'})[0] 
-                    m = pd.read_html(str(m))
-                    m= (m[0].to_json(orient='split'))
-                    df = pd.read_json(m, orient='split')
-                    startpos = edit[12]
-            
-                elif chem[0] == 'N':
-                    n = soup.findChildren(attrs={'id': 'mwKS8'})[0] 
-                    n = pd.read_html(str(n))
-                    n= (n[0].to_json(orient='split'))
-                    df = pd.read_json(n, orient='split')
-                    startpos = edit[13]
-            
-                elif chem[0] == 'O':
-                    o = soup.findChildren(attrs={'id': 'mwLNU'})[0] 
-                    o = pd.read_html(str(o))
-                    o= (o[0].to_json(orient='split'))
-                    df = pd.read_json(o, orient='split')
-                    
-                    startpos = edit[14]
-            
-                elif chem[0] == 'P':
-                    p = soup.findChildren(attrs={'id': 'mwLRk'})[0] 
-                    p = pd.read_html(str(p))
-                    p= (p[0].to_json(orient='split'))
-                    df = pd.read_json(p, orient='split')
-                    
-                    startpos = edit[15]
-            
-                elif chem[0] == 'R':
-                    r = soup.findChildren(attrs={'id': 'mwLeA'})[0] 
-                    r = pd.read_html(str(r))
-                    r= (r[0].to_json(orient='split'))
-                    df = pd.read_json(r, orient='split')
-                    startpos = edit[16]
-            
-                elif chem[0] == 'S':
-                    s = soup.findChildren(attrs={'id': 'mwLoU'})[0] 
-                    s = pd.read_html(str(s))
-                    s= (s[0].to_json(orient='split'))
-                    df = pd.read_json(s, orient='split')
-                    startpos = edit[17]
-            
-                elif chem[0] == 'T':
-                    t = soup.findChildren(attrs={'id': 'mwMNw'})[0] 
-                    t = pd.read_html(str(t))
-                    t= (t[0].to_json(orient='split'))
-                    df = pd.read_json(t, orient='split')
-                    startpos = edit[18]
-            
-                elif chem[0] == 'U':
-                    u = soup.findChildren(attrs={'id': 'mwMgg'})[0] 
-                    u = pd.read_html(str(u))
-                    u= (u[0].to_json(orient='split'))
-                    df = pd.read_json(u, orient='split')
-                    startpos = edit[19]
-            
-                elif chem[0] == 'V':
-                    v = soup.findChildren(attrs={'id': 'mwMnA'})[0] 
-                    v = pd.read_html(str(v))
-                    v= (v[0].to_json(orient='split'))
-                    df = pd.read_json(v, orient='split')
-                    startpos = edit[20]
-            
-                elif chem[0] == 'W':
-                    
-                    w = soup.findChildren(attrs={'id': 'mwMrI'})[0] 
-                    w = pd.read_html(str(w))
-                    w= (w[0].to_json(orient='split'))
-                    df = pd.read_json(w, orient='split')
-                    startpos = edit[21]
-            
-                elif chem[0] == 'Y':
-                    y = soup.findChildren(attrs={'id': 'mwM34'})[0] 
-                    y = pd.read_html(str(y))
-                    y= (y[0].to_json(orient='split'))
-                    df = pd.read_json(y, orient='split')
-                    
-                    startpos = edit[22]
-            
-                elif chem[0] == 'Z':
-                    z = soup.findChildren(attrs={'id': 'mwNCM'})[0] 
-                    z = pd.read_html(str(z))
-                    z= (z[0].to_json(orient='split'))
-                    df = pd.read_json(z, orient='split')
-                    startpos = edit[23]
-                try:        
-                    dft=df.loc[df[0] == chem].index[0]
-                    a = dft + startpos
-                    b = a + 1
-                    link = list_links2[a:b]
-                    link = str(link)
-                    link = link.replace("\'", '')
-                    link = link.replace('[', '')
-                    link = link.replace(']', '')
-                    url2 = 'https://en.wikipedia.org{}'.format(link)
-                    print(url2)
-                    html2 = urlopen(url2)
-                    soup = BeautifulSoup(html2, 'lxml')
-                    type(soup)
-                    body = soup.find('body')
-                    body = body.findChildren()
-                    body = str(body)
-                    return json.dumps(body)
-                except IndexError:
-                    return json.dumps(defaults)  
-        except KeyError:
-            return json.dumps(defaults)
+                        d = soup.findChildren(attrs={'id': vibe})[0] 
+                        d = pd.read_html(str(d))
+                        d= (d[0].to_json(orient='split'))
+                        df = pd.read_json(d, orient='split')
+                        startpos = vide
+ 
+                    try:        
+                        dft=df.loc[df[0] == chem].index[0]
+                        a = dft + startpos
+                        b = a + 1
+                        link = list_links2[a:b]
+                        link = str(link)
+                        link = link.replace("\'", '')
+                        link = link.replace('[', '')
+                        link = link.replace(']', '')
+                        url2 = 'https://en.wikipedia.org{}'.format(link)
+                        print(url2)
+                        html2 = urlopen(url2)
+                        soup = BeautifulSoup(html2, 'lxml')
+                        type(soup)
+                        body = soup.find('body')
+                        body = body.findChildren()
+                        body = str(body)
+                        return json.dumps(body)
+                    except IndexError:
+                        return json.dumps(defaults)  
+            except KeyError:
+                return json.dumps(defaults)
+    else:
+        return json.dumps(defaults)
 
 @app.callback(
     Output('container2', 'children'),
